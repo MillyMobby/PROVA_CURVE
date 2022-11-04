@@ -25,12 +25,12 @@ void Viewer::start() {
 			
 			glfwPollEvents();
 
-			windowIMGUI();
-			renderIMGUI();
+			//windowIMGUI();
+			//renderIMGUI();
 			glfwSwapBuffers(_window);
 			
 		}
-		cleanupIMGUI();
+		//cleanupIMGUI();
 		Clean();
 }
 
