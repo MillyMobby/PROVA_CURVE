@@ -1,4 +1,11 @@
 #include "CurveGraphics.h"
+void CurveGraphics::setCurve() {
+    std::vector<Vec3d> prova;
+    prova = controlPointsVector();
+    curveMath.setControlPoints(prova);
+    curveMath.setDegree(_pointsNumber - 1);
+    curveMath.deCasteljau(prova); 
+}
 int CurveGraphics::getSelectedVert() {
     return _selectedVert;
 }
@@ -9,16 +16,19 @@ int CurveGraphics::getPointsNumber() {
     return _pointsNumber;
 }
 
-float CurveGraphics::getControlPt_X(int i) {
-    return _controlPolygon[i][0];
+double CurveGraphics::getControlPt_X(int i) {
+   // return _controlPolygon[i][0];
+    return controlPolygon[i * _stride];
 }
 
-float CurveGraphics::getControlPt_Y(int i) {
-    return _controlPolygon[i][1];
+double CurveGraphics::getControlPt_Y(int i) {
+    //return _controlPolygon[i][1];
+    return controlPolygon[i * _stride + 1];
 }
 
-float CurveGraphics::getControlPt_Z(int i) {
-    return _controlPolygon[i][2];
+double CurveGraphics::getControlPt_Z(int i) {
+   // return _controlPolygon[i][2];
+    return controlPolygon[i * _stride + 2];
 }
 
 void CurveGraphics::initGL() {
@@ -28,36 +38,19 @@ void CurveGraphics::initGL() {
     glBindVertexArray(_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 
-    glBufferData(GL_ARRAY_BUFFER, MaxNumPoints * 3 * sizeof(float), (void*)0, GL_STATIC_DRAW);
+    /*glBufferData(GL_ARRAY_BUFFER, MaxNumPoints * 3 * sizeof(float), (void*)0, GL_STATIC_DRAW);
     glVertexAttribPointer(_posLocation, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(_posLocation);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);*/
+
+GLsizeiptr verticesSize = MaxNumPoints * sizeof(controlPolygon[0]);
+    glBufferData(GL_ARRAY_BUFFER, verticesSize, (void*)0, GL_STATIC_DRAW); 
+    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, _stride * sizeof(GLdouble), (void*)0);
+    glEnableVertexAttribArray(0);  
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    /*GLsizeiptr verticesSize = MaxNumDots * sizeof(_vertices[0]);
-    glBufferData(GL_ARRAY_BUFFER, verticesSize, _vertices.data(), GL_STATIC_DRAW);
-    unsigned int position = 0;
-    if (hasPosition()) {
-        std::cout << "POSIZIONE ";
-        glVertexAttribPointer(0, _nElements_position, GL_FLOAT, GL_FALSE, _stride * sizeof(GLfloat), (GLvoid*)(position * sizeof(GL_FLOAT)));
-        glEnableVertexAttribArray(0);
-        position += _nElements_position;
-    }*/
-    
-    /*if (hasColor()) {
-        std::cout << "COLOR ";
-        glVertexAttribPointer(vertColor_loc, _nElements_color, GL_FLOAT, GL_FALSE, _stride * sizeof(GLfloat), (GLvoid*)(position * sizeof(GL_FLOAT)));
-        glEnableVertexAttribArray(vertColor_loc);
-        position += _nElements_color;
-    }*/
-
-   /* glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
-
 }
 
 void CurveGraphics::setupGL() {
@@ -73,34 +66,57 @@ void CurveGraphics::setupGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glPointSize(30);
-    glLineWidth(5);
-
+    glLineWidth(5); 
 }
 
 
 void CurveGraphics::LoadPointsIntoVBO()
 {
     glBindBuffer(GL_ARRAY_BUFFER, _VBO); 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, _pointsNumber * 3 * sizeof(float), _controlPolygon); //non e' un resize
-   // glBufferSubData(GL_ARRAY_BUFFER, 0, _vertices.size()/3 * sizeof(_vertices[0]), _vertices.data());
+    glBufferSubData(GL_ARRAY_BUFFER, 0, _pointsNumber * 3 * sizeof(double), controlPolygon); //non e' un resize
+   // glBufferSubData(GL_ARRAY_BUFFER, 0, _vertices.size()/3 * sizeof(_vertices[0]), _vertices.data());    
 }
 
-void CurveGraphics::AddPoint(float x, float y)
+void CurveGraphics::clipSpace() {
+    for (int i = 0; i < _pointsNumber - 1; i++) {
+        /*_controlPolygon[i][0] = _controlPolygon[i + 1][0];
+        _controlPolygon[i][1] = _controlPolygon[i + 1][1];
+        _controlPolygon[i][2] = _controlPolygon[i + 1][2];*/
+        controlPolygon[i * _stride] = controlPolygon[(i + 1) * _stride];
+        controlPolygon[i * _stride + 1] = controlPolygon[(i + 1) * _stride + 1];
+        controlPolygon[i * _stride + 2] = controlPolygon[(i + 1) * _stride + 2];
+    }
+}
+
+void CurveGraphics::AddPoint(double x, double y)
 {
-    if (_pointsNumber < MaxNumPoints) {
-        _controlPolygon[_pointsNumber][0] = x;
+    if (_pointsNumber < MaxNumPoints && _pointsNumber!=0) {
+       /* _controlPolygon[_pointsNumber][0] = x;
         _controlPolygon[_pointsNumber][1] = y;
-        _controlPolygon[_pointsNumber][2] = 0;
-        _pointsNumber++;
-        LoadPointsIntoVBO();
+        _controlPolygon[_pointsNumber][2] = 0;*/
+        controlPolygon[_pointsNumber *_stride] = x;
+        controlPolygon[_pointsNumber * _stride +1] = y;
+        controlPolygon[_pointsNumber * _stride +2] = 0;
+        
     } 
+    else if (_pointsNumber == 0) {
+        controlPolygon[0] = x;
+        controlPolygon[1] = y;
+        controlPolygon[2] = 0;
+    }
+        _pointsNumber++;
+        LoadPointsIntoVBO(); 
+        controlPointsVector();
 }
 
-void CurveGraphics::ChangePoint(int i, float x, float y)
+void CurveGraphics::ChangePoint(int i, double x, double y)
 {
     if (i >= 0 && i < _pointsNumber) {
-        _controlPolygon[i][0] = x;
-        _controlPolygon[i][1] = y;}
+        /*_controlPolygon[i][0] = x;
+        _controlPolygon[i][1] = y;*/
+        controlPolygon[i * _stride] = x;
+        controlPolygon[i * _stride + 1] = y;
+    }
     LoadPointsIntoVBO();
 }
 
@@ -110,9 +126,12 @@ void CurveGraphics::RemoveFirstPoint()
         return;
     }
     for (int i = 0; i < _pointsNumber - 1; i++) {
-        _controlPolygon[i][0] = _controlPolygon[i + 1][0];
+        /*_controlPolygon[i][0] = _controlPolygon[i + 1][0];
         _controlPolygon[i][1] = _controlPolygon[i + 1][1];
-        _controlPolygon[i][2] = _controlPolygon[i + 1][2];
+        _controlPolygon[i][2] = _controlPolygon[i + 1][2];*/
+        controlPolygon[i * _stride] = controlPolygon[(i + 1) * _stride ];
+        controlPolygon[i * _stride + 1] = controlPolygon[(i + 1) * _stride + 1];
+        controlPolygon[i * _stride + 2] = controlPolygon[(i + 1) * _stride + 2];
     }
     _pointsNumber--;
     if (_pointsNumber > 0) {
@@ -125,19 +144,6 @@ void CurveGraphics::RemoveLastPoint()
     _pointsNumber = (_pointsNumber > 0) ? _pointsNumber - 1 : 0;
 }
 
-//bool CurveGraphics::hasPosition() {
-//    return true; //_vertex_mask & vertPos_loc;
-//}
-//
-//bool CurveGraphics::hasTexCoord() {
-//    return _vertex_mask & vertColor_loc;
-//}
-//
-//bool CurveGraphics::hasColor() {
-//
-//    return true; //_vertex_mask & _mesh_vertices_color;
-//}
-//
 void CurveGraphics::renderScene() {
     glBindVertexArray(_VAO);
     
@@ -149,8 +155,24 @@ void CurveGraphics::renderScene() {
     // punti
     glVertexAttrib3f(_colorLocation, _pointsColor.x, _pointsColor.y, _pointsColor.z);		
     glDrawArrays(GL_POINTS, 0, _pointsNumber);
+    glBindVertexArray(0);  
+}
 
-    glBindVertexArray(0);
+std::vector<Vec3d> CurveGraphics::controlPointsVector() {
     
+    Vec3d pt = Vec3d(0);
+    std::vector<Vec3d> controlPt;
+    std::cout << "STAMPO I PUNTI DI CONTROLLO ->" << std::endl;
+    for (int i = 0; i < _pointsNumber*3; i = i + 3) {
+        
+        controlPt.push_back(pt);
+        
+        controlPt[i/3].x = controlPolygon[i];
+        controlPt[i/3].y = controlPolygon[i + 1];
+        controlPt[i/3].z = controlPolygon[i + 2];
+
+        std::cout << controlPt[i / 3];
+    }
+    return controlPt;
 }
 

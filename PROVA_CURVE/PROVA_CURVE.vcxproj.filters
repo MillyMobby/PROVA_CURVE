@@ -57,6 +57,9 @@
     <ClInclude Include="..\..\..\librerie\imgui-1.88\imconfig.h">
       <Filter>File di intestazione\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Vec3d.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CurveGraphics.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui.cpp">
       <Filter>File di intestazione\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec3d.cpp">
+      <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

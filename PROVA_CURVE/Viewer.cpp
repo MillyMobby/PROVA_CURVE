@@ -13,7 +13,7 @@ void Viewer::start() {
 
 		while (!glfwWindowShouldClose(_window)) {
 			//processMouseInput();		
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
 			const float clearDepth = 1.0f;
 			glClearBufferfv(GL_DEPTH, 0, &clearDepth);	
@@ -21,12 +21,10 @@ void Viewer::start() {
 
 			graphics.renderScene();
 			//processInput();
-
+			windowIMGUI();
+			renderIMGUI();
 			
 			glfwPollEvents();
-
-			//windowIMGUI();
-			//renderIMGUI();
 			glfwSwapBuffers(_window);
 			
 		}
@@ -61,10 +59,10 @@ bool Viewer::init() {
 	//glOrtho(0, _windowSize.width, 0, _windowSize.height, 0, 1); // essentially set coordinate system
 	//glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
 	//glLoadIdentity(); // same as above comment
-	setIMGUI();
+	
 	glfwSetFramebufferSizeCallback(_window, Viewer::frameBufferSizeCB);
 	glfwSetWindowUserPointer(_window, (void*)&_windowSize);
-	setupCallbacks();
+	setupCallbacks();setIMGUI();
 	return 1;
 }
 
@@ -85,7 +83,6 @@ void Viewer::setupCallbacks() {
 	glfwSetCursorPosCallback(_window, cursorPosCallback);
 }
 
-
 void Viewer::frameBufferSizeCB(GLFWwindow* window, int width, int height) {
 	if (window != nullptr) {
 		glViewport(0, 0, width, height);
@@ -98,34 +95,34 @@ void Viewer::frameBufferSizeCB(GLFWwindow* window, int width, int height) {
 	}
 }
 
-
 void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	WindowSize* windowSize = (WindowSize*)glfwGetWindowUserPointer(window);
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	// clip space [-1,1]. 
-	float clipX =  (2.0f * (float)xpos / (float)(windowSize->width )) - 1.0f;
-	float clipY = 1.0f - (2.0f * (float)ypos / (float)(windowSize->height ));
+	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
+	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height ));
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		graphics.AddPoint(clipX, clipY);
+		graphics.setCurve();
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		if (action == GLFW_PRESS) {
-			float minDist = 10000.0f;
+			double minDist = 10000.0;
 			int minI;
 			for (int i = 0; i < graphics.getPointsNumber(); i++) {
-				float thisDistX =  (clipX - graphics.getControlPt_X(i)) * 0.5f *(float)windowSize->width;
-				float thisDistY =  (clipY - graphics.getControlPt_Y(i)) * 0.5f *(float)windowSize->height;
-				float thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
+				double thisDistX =  (clipX - graphics.getControlPt_X(i)) * 0.5f *(double)windowSize->width;
+				double thisDistY =  (clipY - graphics.getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
+				double thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
 				if (thisDist < minDist) {
 					minDist = thisDist;
 					minI = i;
 				}
 			}
 			if (minDist <= 10.0) {     
-				std::cout << "vertice selezionato" << std::endl;
+				
 				graphics.setSelectedVert(minI);
 				graphics.ChangePoint(minI, clipX, clipY);
 			}
@@ -142,8 +139,8 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	if (graphics.getSelectedVert() == -1) {
 		return;
 	}
-	float dotX = (2.0f * (float)x / (float)(windowSize->width - 1)) - 1.0f;
-	float dotY = 1.0f - (2.0f * (float)y / (float)(windowSize->height - 1));
+	double dotX = (2.0f * (double)x / (double)(windowSize->width - 1)) - 1.0f;
+	double dotY = 1.0f - (2.0f * (double)y / (double)(windowSize->height - 1));
 
 	graphics.ChangePoint(graphics.getSelectedVert(), dotX, dotY);
 }
@@ -173,10 +170,12 @@ void Viewer::renderIMGUI() {
 // Rendering
 	ImGui::Render();
 	int display_w, display_h;
-	glfwGetFramebufferSize(_window, &display_w, &display_h);
+	/*glfwGetFramebufferSize(_window, &display_w, &display_h);
 	glViewport(0, 0, display_w, display_h);
-	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
+	
+	*/
+	/*glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+	glClear(GL_COLOR_BUFFER_BIT);*/
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 

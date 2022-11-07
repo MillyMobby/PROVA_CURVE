@@ -16,7 +16,7 @@ public:
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f;
 
-    WindowSize() { isChanged = false; width = 1000; height = 625; }
+    WindowSize() { isChanged = false; width = 1280; height = 720; }
 
     bool isChanged;
     int width;
@@ -32,7 +32,7 @@ class Viewer
     Shader shader;
 
     bool show_demo_window = true;
-    bool show_another_window = false;
+    bool show_another_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     
 public:

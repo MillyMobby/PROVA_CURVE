@@ -23,8 +23,8 @@ public:
 	Vec3f operator+=(float other);
 
 
-	Vec3f operator-(const Vec3f& other) const;
-	Vec3f operator-(const float& other) const;
+	/*Vec3f operator-(const Vec3f& other) const;
+	Vec3f operator-(const float& other) const;*/
 
 
 	Vec3f operator*(const float& other) const;
@@ -37,6 +37,13 @@ public:
 	float length2();
 	Vec3f normalize();
 	Vec3f cross(const Vec3f& other) const;
+	static Vec3f lerp(const Vec3f& v0, const Vec3f& v1, float alpha);
 };
 
-Vec3f operator-(const float& scalare, const Vec3f& other);
+Vec3f operator - (const float& scalare, const Vec3f& other);
+Vec3f operator - (const Vec3f& v0, const Vec3f& v1);
+
+// multiply and divide by scalar
+Vec3f operator * (float f, const Vec3f& v);
+Vec3f operator * (const Vec3f& v, float f);
+Vec3f operator / (const Vec3f& v, float f);

@@ -22,10 +22,10 @@ Vec3f Vec3f::operator+=(float other) {//???????????????????????
 	return Vec3f(x = x + other, y = y + other, z = z + other);
 }
 
-Vec3f Vec3f::operator-(const Vec3f& other) const { return Vec3f(x - other.x, y - other.y, z - other.z); }
-
-
-Vec3f Vec3f::operator-(const float& other) const { return Vec3f(x - other, y - other, z - other); }
+//Vec3f Vec3f::operator-(const Vec3f& other) const { return Vec3f(x - other.x, y - other.y, z - other.z); }
+//
+//
+//Vec3f Vec3f::operator-(const float& other) const { return Vec3f(x - other, y - other, z - other); }
 Vec3f operator-(const float& scalare, const Vec3f& other) { return Vec3f(scalare - other.x, scalare - other.y, scalare - other.z); }
 
 Vec3f Vec3f::operator*(const float& other) const { return Vec3f(x * other, y * other, z * other); }
@@ -64,8 +64,30 @@ Vec3f Vec3f::cross(const Vec3f& other) const {
 	vType v3 = x * other.y - y * other.x;
 	return Vec3f(v1, v2, v3);
 }
+// static
+Vec3f Vec3f::lerp(const Vec3f& v0, const Vec3f& v1, float alpha)
+{
+	return alpha * (v1 - v0) + v0;
+}
 
 Vec3f operator - (const Vec3f& v0, const Vec3f& v1)
 {
 	return Vec3f(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z);
+}
+
+
+
+Vec3f operator * (float f, const Vec3f& v)
+{
+	return Vec3f(v.x * f, v.y * f, v.z * f);
+}
+
+Vec3f operator * (const Vec3f& v, float f)
+{
+	return Vec3f(v.x * f, v.y * f, v.z * f);
+}
+
+Vec3f operator / (const Vec3f& v, float f)
+{
+	return Vec3f(v.x / f, v.y / f, v.z / f);
 }
