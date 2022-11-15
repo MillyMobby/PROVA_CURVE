@@ -1,9 +1,7 @@
 #pragma once
 #include "Shader.h"
 #include "CurveGraphics.h"
-#include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "ImguiController.h"
 #include <math.h>
 
 CurveGraphics graphics;
@@ -27,9 +25,10 @@ class Viewer
 {
     //WINDOW
     GLFWwindow* _window = nullptr;
-    GLFWwindow* _window2 = nullptr;
+   
     WindowSize _windowSize;
     Shader shader;
+    ImguiController _imgui;
 
     bool show_demo_window = true;
     bool show_another_window = true;
@@ -42,10 +41,8 @@ public:
     void start();
     bool init();
 
-    void setIMGUI();
-    void windowIMGUI();
-    void renderIMGUI();
-    void cleanupIMGUI();
+    void windowShouldCloseIMGUI();
+    
 
     void setupCallbacks();
     static void frameBufferSizeCB(GLFWwindow* window, int width, int height);

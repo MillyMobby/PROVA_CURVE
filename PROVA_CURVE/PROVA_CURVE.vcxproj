@@ -154,6 +154,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CurveGraphics.h" />
     <ClInclude Include="CurveMath.h" />
+    <ClInclude Include="ImguiController.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Vec3d.h" />
     <ClInclude Include="Vec3f.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CurveGraphics.cpp" />
     <ClCompile Include="CurveMath.cpp" />
+    <ClCompile Include="ImguiController.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Vec3d.cpp" />
     <ClCompile Include="Vec3f.cpp" />

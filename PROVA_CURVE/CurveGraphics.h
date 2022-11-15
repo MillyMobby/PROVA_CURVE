@@ -8,7 +8,7 @@ private:
 	static const int MaxNumPoints = 100;    
 	int _pointsNumber = 0;  
 	
-	double _controlPolygon[MaxNumPoints][3];
+	//double _controlPolygon[MaxNumPoints][3];
 	double controlPolygon[MaxNumPoints*3];
 	int _selectedVert = -1;
 
@@ -34,17 +34,17 @@ public:
 	double getControlPt_Y(int i);
 	double getControlPt_Z(int i);
 
-	inline CurveGraphics& operator=(const CurveGraphics& m) {
-		for (int i = 0; i < MaxNumPoints; i++)
-		{
-			for (int j = 0; j < 2; j++) { _controlPolygon[i][j] = m._controlPolygon[i][j]; }
-			_VAO = m._VAO;
-			_VBO = m._VBO;
-			
-		}return *this;
-	};
+	//inline CurveGraphics& operator=(const CurveGraphics& m) {
+	//	for (int i = 0; i < MaxNumPoints; i++)
+	//	{
+	//		//for (int j = 0; j < 2; j++) { _controlPolygon[i][j] = m._controlPolygon[i][j]; }
+	//		_VAO = m._VAO;
+	//		_VBO = m._VBO;
+	//		
+	//	}return *this;
+	//};
 	CurveGraphics() {};
-	~CurveGraphics() {};
+	~CurveGraphics() { delete[] controlPolygon; };
 
 	void initGL();
 	void setupGL();
