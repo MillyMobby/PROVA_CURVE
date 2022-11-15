@@ -29,8 +29,8 @@ Vec3d Vec3d::operator+=(double other) {//???????????????????????
 //Vec3f Vec3f::operator-(const float& other) const { return Vec3f(x - other, y - other, z - other); }
 Vec3d operator-(const double& scalare, const Vec3d& other) { return Vec3d(scalare - other.x, scalare - other.y, scalare - other.z); }
 
-Vec3d Vec3d::operator*(const double& other) const { return Vec3d(x * other, y * other, z * other); }
-Vec3d Vec3d::operator*(const Vec3d& other) const { return Vec3d(x * other.x, y * other.y, z * other.z); }
+//Vec3d Vec3d::operator*(const double& other) const { return Vec3d(x * other, y * other, z * other); }
+//Vec3d Vec3d::operator*(const Vec3d& other) const { return Vec3d(x * other.x, y * other.y, z * other.z); }
 
 std::ostream& operator<<(std::ostream& output, const Vec3d& a) {
 	output << endl

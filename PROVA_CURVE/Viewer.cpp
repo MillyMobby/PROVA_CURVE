@@ -19,6 +19,7 @@ void Viewer::start() {
 			glClearBufferfv(GL_DEPTH, 0, &clearDepth);	
 			glUseProgram(shader.getShaderProgram());	
 
+			glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
 			graphics.renderScene();
 			//processInput();
 			windowIMGUI();
@@ -60,9 +61,11 @@ bool Viewer::init() {
 	//glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
 	//glLoadIdentity(); // same as above comment
 	
-	glfwSetFramebufferSizeCallback(_window, Viewer::frameBufferSizeCB);
+	//glfwSetFramebufferSizeCallback(_window, Viewer::frameBufferSizeCB);
 	glfwSetWindowUserPointer(_window, (void*)&_windowSize);
-	setupCallbacks();setIMGUI();
+	setupCallbacks();
+	
+	setIMGUI();
 	return 1;
 }
 
@@ -76,11 +79,12 @@ bool Viewer::Clean() {
 }
 
 void Viewer::setupCallbacks() {
-	glfwSetErrorCallback(glfw_error_callback);
+	//glfwSetErrorCallback(glfw_error_callback);
 	glfwSetFramebufferSizeCallback(_window, frameBufferSizeCB);
 	glfwSetKeyCallback(_window, keyCallback);	
 	glfwSetMouseButtonCallback(_window, mouseButtonCallback);
 	glfwSetCursorPosCallback(_window, cursorPosCallback);
+
 }
 
 void Viewer::frameBufferSizeCB(GLFWwindow* window, int width, int height) {
@@ -93,6 +97,7 @@ void Viewer::frameBufferSizeCB(GLFWwindow* window, int width, int height) {
 			windowSize->isChanged = true;
 		}
 	}
+	
 }
 
 void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -101,11 +106,12 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	// clip space [-1,1]. 
-	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
-	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height ));
+	/*double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
+	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height ));*/
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		graphics.AddPoint(clipX, clipY);
+		std::cout << " mouse in " << xpos << ", " << ypos << std::endl;
+		graphics.AddPoint(xpos, ypos/*clipX, clipY*/);
 		graphics.setCurve();
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
@@ -113,8 +119,8 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 			double minDist = 10000.0;
 			int minI;
 			for (int i = 0; i < graphics.getPointsNumber(); i++) {
-				double thisDistX =  (clipX - graphics.getControlPt_X(i)) * 0.5f *(double)windowSize->width;
-				double thisDistY =  (clipY - graphics.getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
+				double thisDistX =  (xpos/*clipX*/ - graphics.getControlPt_X(i)) * 0.5f *(double)windowSize->width;
+				double thisDistY =  (ypos/*clipY*/ - graphics.getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
 				double thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
 				if (thisDist < minDist) {
 					minDist = thisDist;
@@ -124,7 +130,7 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 			if (minDist <= 10.0) {     
 				
 				graphics.setSelectedVert(minI);
-				graphics.ChangePoint(minI, clipX, clipY);
+				graphics.ChangePoint(minI, xpos, ypos/*clipX, clipY*/);
 			}
 		}
 		else if (action == GLFW_RELEASE) {

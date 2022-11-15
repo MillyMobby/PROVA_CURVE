@@ -1,25 +1,38 @@
 #include "CurveMath.h"
-int CurveMath::getKnotsInterval(int t) {
+bool CurveMath::degenere(int pointsNum) {	
+	if (pointsNum < degree + 1) return true;
+	else return false;
+}
+
+int CurveMath::getKnotsInterval(double t) {
 	int n = controlPoints.size();
-	for (int nodeI = 0; nodeI <= n + degree - 1; nodeI++) {
-		if (t >= knots[nodeI] && t < knots[nodeI + 1])
+	for (int nodeI = 0; nodeI < knots.size(); nodeI++) {
+		if (t >= knots[nodeI] && t <= knots[nodeI + 1]) {
 			return nodeI;
+		}
 	}
 	return -1;
 }
 
-void CurveMath::generateKnots() {
+void CurveMath::generateKnots(int pointsNum) {
 	knots.clear();
 
-	for (int i = 0; i < degree; i++)
-		knots.push_back(0);
+	for (int i = 0; i <= degree; i++) { 
+		knots.push_back(0); std::cout << 0 << " ";}
 
-	int middle = controlPoints.size() - degree;
-	for (int i = 0; i < middle; i++)
-		knots.push_back(double(i + 1) / (middle + 1));
-
-	for (int i = 0; i < degree; i++)
-		knots.push_back(1);
+	int middle = (pointsNum -1)- degree;
+	/*if (middle <= 0) { std::cout << " degenere " << std::endl; }
+	else 
+	{*/
+		for (int j = 0; j < middle; j++) {
+			double h = double(j + 1) / (middle + 1);
+			knots.push_back(double(j + 1) / (middle + 1));
+			std::cout << " " << h << " ";
+		}
+	//}
+	for (int k = 0; k <=degree; k++) { 
+		knots.push_back(1);	 
+		std::cout << " " << 1 << " "; }
 }
 
 void CurveMath::setDegree(int p) { degree = p; }
@@ -64,32 +77,32 @@ std::vector<double> CurveMath::fullInsertion(int knotInterval) {
 	for (int i = 0; i < knots.size() - (knotInterval + 1); i++) {
 		newKnots.push_back(knots[knotInterval + 1 + i]);
 	}
+	return newKnots;
 }
 
-Vec3d CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t, int knotInterval) {
-	//If u lies in[uk, uk + 1) and u != uk, let h = p(i.e., inserting u p times) and s = 0;
+void CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
+	int m = getKnotsInterval(t);
+	//std::vector<Vec3d> affectedPoints;
+	Vec3d evaluatedPoint = Vec3d(0);
+	int count = 0;
 	
-
+	/*std::cout << "P = 3, NODI TOTALI = " << knots.size() << std::endl;
+	std::cout << "INTERVALLO NODO DI INDICE -> " << m << std::endl;
+	std::cout << "SUPPORTO NEI NODI [ " << m  << ", "<< m + degree + 1<< ") "<< std::endl;	
+	for (int i = m - degree ; i < m +1; i++) {		
+		affectedPoints.push_back(controlPoints[i]);
+		std::cout << "PUNTO DI CONTROLLO DI INDICE  "<< i << " = " << controlPoints[i] << " nel nuovo vettore è indice ->" << count << "\n";		
+	}*/
+	
+	for (int r = 1; r <= degree; r++) {
+		for (int i = m - degree + r; i <= m; i++) {
+			std::cout << " r = " << r << " i = " << i << std::endl;			
+			double omega = (t - knots[i]) / (knots[i + 1 + degree - r] - knots[i]);
+			count++;
+			std::cout << "valori omega " << i << "," << r << " ------> " << omega << std::endl;
+			evaluatedPoint = Vec3d::lerp(controlPoints[i - 1], controlPoints[i], omega);
+		}
+	}
+	std::cout << "PUNTO DEBOOR_ALG -> "<< evaluatedPoint;
 }
-//The general knot insertion algorithm can easily be modified to fulfill our purpose.
-// First note that we only need to insert u enough number of times so that u becomes a knot of multiplicity p.
-// If u is already a knot of multiplicity s, then inserting it p - s times would be sufficient.
-//
-	//Input: a value u
-	//Output : the point on the curve, C(u)
-	//
-	//If u lies in[uk, uk + 1) and u != uk, let h = p(i.e., inserting u p times) and s = 0;
-	//If u = uk and uk is a knot of multiplicity s, let h = p - s(i.e., inserting u p - s times);
-	//Copy the affected control points Pk - s, Pk - s - 1, Pk - s - 2, ..., Pk - p + 1 and Pk - p to a new array and rename them as Pk - s, 0, Pk - s - 1, 0, Pk - s - 2, 0, ..., Pk - p + 1, 0;
-	//
-	//for r : = 1 to h do
-	//for i : = k - p + r to k - s do
-	//begin
-	//Let ai, r = (u - ui) / (ui + p - r + 1 - ui), 
-	//Let Pi, r = (1 - ai, r) Pi - 1, r - 1 + ai, r Pi, r - 1
-	//end
-	//Pk - s, p - s is the point C(u).
-//std::vector<CurvePoint> CurveMath::DeCasteljau(int u, int delta) {
-	
 
-//}

@@ -27,8 +27,8 @@ public:
 	Vec3f operator-(const float& other) const;*/
 
 
-	Vec3d operator*(const double& other) const;
-	Vec3d operator*(const Vec3d& other) const;
+	/*Vec3d operator*(const double& other) const;
+	Vec3d operator*(const Vec3d& other) const;*/
 
 	friend std::ostream& operator<<(std::ostream& output, const Vec3d& a);
 

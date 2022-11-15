@@ -3,8 +3,13 @@ void CurveGraphics::setCurve() {
     std::vector<Vec3d> prova;
     prova = controlPointsVector();
     curveMath.setControlPoints(prova);
-    curveMath.setDegree(_pointsNumber - 1);
-    curveMath.deCasteljau(prova); 
+    curveMath.setDegree(3);
+   // curveMath.setDegree(_pointsNumber - 1);
+   ///curveMath.deCasteljau(prova); 
+    curveMath.generateKnots(_pointsNumber);
+
+    double x = double(0.4);
+    if (curveMath.degenere(_pointsNumber) == false) { curveMath.deBoor(prova, x); }
 }
 int CurveGraphics::getSelectedVert() {
     return _selectedVert;
@@ -139,10 +144,7 @@ void CurveGraphics::RemoveFirstPoint()
     }
 }
 
-void CurveGraphics::RemoveLastPoint()
-{
-    _pointsNumber = (_pointsNumber > 0) ? _pointsNumber - 1 : 0;
-}
+void CurveGraphics::RemoveLastPoint() {  _pointsNumber = (_pointsNumber > 0) ? _pointsNumber - 1 : 0; }
 
 void CurveGraphics::renderScene() {
     glBindVertexArray(_VAO);
@@ -151,7 +153,6 @@ void CurveGraphics::renderScene() {
         glVertexAttrib3f(_colorLocation, _lineColor.x, _lineColor.y, _lineColor.z);		// magenta
         glDrawArrays(GL_LINE_STRIP, 0, _pointsNumber);                //linee
     }
-
     // punti
     glVertexAttrib3f(_colorLocation, _pointsColor.x, _pointsColor.y, _pointsColor.z);		
     glDrawArrays(GL_POINTS, 0, _pointsNumber);
@@ -162,7 +163,7 @@ std::vector<Vec3d> CurveGraphics::controlPointsVector() {
     
     Vec3d pt = Vec3d(0);
     std::vector<Vec3d> controlPt;
-    std::cout << "STAMPO I PUNTI DI CONTROLLO ->" << std::endl;
+    //std::cout << "STAMPO I PUNTI DI CONTROLLO ->" << std::endl;
     for (int i = 0; i < _pointsNumber*3; i = i + 3) {
         
         controlPt.push_back(pt);
@@ -170,8 +171,6 @@ std::vector<Vec3d> CurveGraphics::controlPointsVector() {
         controlPt[i/3].x = controlPolygon[i];
         controlPt[i/3].y = controlPolygon[i + 1];
         controlPt[i/3].z = controlPolygon[i + 2];
-
-        std::cout << controlPt[i / 3];
     }
     return controlPt;
 }
