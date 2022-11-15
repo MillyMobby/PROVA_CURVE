@@ -145,16 +145,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\imconfig.h" />
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\imgui.h" />
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\imgui_internal.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CurveGraphics.h" />
     <ClInclude Include="CurveMath.h" />
-    <ClInclude Include="ImguiController.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Vec3d.h" />
     <ClInclude Include="Vec3f.h" />
@@ -162,17 +161,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\librerie\glad\src\glad.c" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui.cpp" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_demo.cpp" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_draw.cpp" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_tables.cpp" />
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_widgets.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CurveGraphics.cpp" />
     <ClCompile Include="CurveMath.cpp" />
     <ClCompile Include="ImguiController.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Vec3d.cpp" />
     <ClCompile Include="Vec3f.cpp" />

@@ -9,7 +9,7 @@ private:
 	int _pointsNumber = 0;  
 	
 	//double _controlPolygon[MaxNumPoints][3];
-	double controlPolygon[MaxNumPoints*3];
+	double* controlPolygon;// [MaxNumPoints * 3] ;
 	int _selectedVert = -1;
 
 	GLuint _VAO = -1; // SONO INT -> perché sono riferimenti// Vertex Array Object - holds info about an array of vertex data;
@@ -43,8 +43,8 @@ public:
 	//		
 	//	}return *this;
 	//};
-	CurveGraphics() {};
-	~CurveGraphics() { delete[] controlPolygon; };
+	CurveGraphics() { std::cout << "COSTRUTTOREEEE"; controlPolygon = new double[MaxNumPoints * 3]; };
+	~CurveGraphics(); 
 
 	void initGL();
 	void setupGL();

@@ -8,8 +8,8 @@ void Viewer::start() {
 		init();
 		shader.setName("color");
 		shader.processShader();
-		graphics.setupGL();
-		graphics.initGL();
+		graphics->setupGL();
+		graphics->initGL();
 
 		while (!glfwWindowShouldClose(_window)) {
 			//processMouseInput();		
@@ -20,7 +20,7 @@ void Viewer::start() {
 			glUseProgram(shader.getShaderProgram());	
 
 			glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
-			graphics.renderScene();
+			graphics->renderScene();
 			//processInput();
 			//windowShouldCloseIMGUI();
 			
@@ -30,6 +30,7 @@ void Viewer::start() {
 		}
 		//_imgui.cleanupIMGUI();
 		Clean();
+		
 }
 
 bool Viewer::init() {
@@ -104,16 +105,16 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		std::cout << " mouse in " << xpos << ", " << ypos << std::endl;
-		graphics.AddPoint(xpos, ypos/*clipX, clipY*/);
-		graphics.setCurve();
+		graphics->AddPoint(xpos, ypos/*clipX, clipY*/);
+		graphics->setCurve();
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		if (action == GLFW_PRESS) {
 			double minDist = 10000.0;
 			int minI;
-			for (int i = 0; i < graphics.getPointsNumber(); i++) {
-				double thisDistX =  (xpos/*clipX*/ - graphics.getControlPt_X(i)) * 0.5f *(double)windowSize->width;
-				double thisDistY =  (ypos/*clipY*/ - graphics.getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
+			for (int i = 0; i < graphics->getPointsNumber(); i++) {
+				double thisDistX =  (xpos/*clipX*/ - graphics->getControlPt_X(i)) * 0.5f *(double)windowSize->width;
+				double thisDistY =  (ypos/*clipY*/ - graphics->getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
 				double thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
 				if (thisDist < minDist) {
 					minDist = thisDist;
@@ -121,12 +122,12 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 				}
 			}
 			if (minDist <= 10.0) {     				
-				graphics.setSelectedVert(minI);
-				graphics.ChangePoint(minI, xpos, ypos/*clipX, clipY*/);
+				graphics->setSelectedVert(minI);
+				graphics->ChangePoint(minI, xpos, ypos/*clipX, clipY*/);
 			}
 		}
 		else if (action == GLFW_RELEASE) {
-			graphics.setSelectedVert(-1);
+			graphics->setSelectedVert(-1);
 		}
 	}
 }
@@ -134,12 +135,12 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 
 	WindowSize* windowSize = (WindowSize*)glfwGetWindowUserPointer(window);
-	if (graphics.getSelectedVert() == -1) { return; }
+	if (graphics->getSelectedVert() == -1) { return; }
 
 	double dotX = (2.0f * (double)x / (double)(windowSize->width - 1)) - 1.0f;
 	double dotY = 1.0f - (2.0f * (double)y / (double)(windowSize->height - 1));
 
-	graphics.ChangePoint(graphics.getSelectedVert(), dotX, dotY);
+	graphics->ChangePoint(graphics->getSelectedVert(), dotX, dotY);
 }
 
 void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -150,16 +151,16 @@ void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, true);
 	}
 	else if (key == GLFW_KEY_F) {
-		if (graphics.getSelectedVert() != 0) {   
-			graphics.RemoveFirstPoint();
-			if (graphics.getSelectedVert() < 0) {
-				graphics.setSelectedVert(graphics.getSelectedVert());
+		if (graphics->getSelectedVert() != 0) {
+			graphics->RemoveFirstPoint();
+			if (graphics->getSelectedVert() < 0) {
+				graphics->setSelectedVert(graphics->getSelectedVert());
 			}		
-			else graphics.setSelectedVert(-1);
+			else graphics->setSelectedVert(-1);
 		}
 	}
 	else if (key == GLFW_KEY_L) {
-			graphics.RemoveLastPoint();		
+			graphics->RemoveLastPoint();
 	}
 }
 

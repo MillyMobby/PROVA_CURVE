@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="File di origine\NewFilter1">
-      <UniqueIdentifier>{081520b1-db86-42e0-ad3d-bb67442f2bd5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="File di intestazione\imgui">
       <UniqueIdentifier>{4d37fe5f-dfa8-4382-9ab7-676def2fd3c2}</UniqueIdentifier>
     </Filter>
@@ -39,29 +36,26 @@
     <ClInclude Include="CurveMath.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_glfw.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_opengl3.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_opengl3_loader.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\imgui.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\imgui_internal.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\librerie\imgui-1.88\imconfig.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="Vec3d.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="ImguiController.h">
-      <Filter>File di intestazione</Filter>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_glfw.h">
+      <Filter>File di origine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,31 +80,31 @@
     <ClCompile Include="CurveMath.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_opengl3.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\backends\imgui_impl_glfw.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_demo.cpp">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_draw.cpp">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_tables.cpp">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui_widgets.cpp">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\librerie\imgui-1.88\imgui.cpp">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Vec3d.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="ImguiController.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>File di intestazione\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,7 @@
 #include "CurveGraphics.h"
+
+CurveGraphics::~CurveGraphics() { std::cout << "DISTRUTTOREEEE"; delete[] controlPolygon; }
+
 void CurveGraphics::setCurve() {
     std::vector<Vec3d> prova;
     prova = controlPointsVector();

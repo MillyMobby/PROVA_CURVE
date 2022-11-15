@@ -4,15 +4,15 @@
 #include "ImguiController.h"
 #include <math.h>
 
-CurveGraphics graphics;
+CurveGraphics* graphics = new CurveGraphics();
 
 struct WindowSize {
 
 public:
 
-    float currentFrame = static_cast<float>(glfwGetTime());
-    float deltaTime = 0.0f;	// Time between current frame and last frame
-    float lastFrame = 0.0f;
+    //float currentFrame = static_cast<float>(glfwGetTime());
+    //float deltaTime = 0.0f;	// Time between current frame and last frame
+    //float lastFrame = 0.0f;
 
     WindowSize() { isChanged = false; width = 1280; height = 720; }
 
