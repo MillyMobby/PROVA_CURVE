@@ -23,7 +23,9 @@ public:
     ~CurveMath() {};
 
     bool degenere(int pointsNum);
-    int getKnotsInterval(double t);
+    const int getKnotsInterval(double t);
+    const std::vector<double> getKnotsVector();
+    const double getKnot(int i);
     void generateKnots(int pointsNum);
     void setControlPoints(std::vector<Vec3d> cp);
     void setDegree(int p);
@@ -32,8 +34,7 @@ public:
     std::vector<double> fullInsertion(int knotInterval);
     //Vec3d deBoor(int k, int degree, double x, double* knots, std::vector<Vec3d> controlPoints);
     //Vec3d deBoor(std::vector<Vec3d> controlPoints, double increment, int knotInterval);
-    Vec3d deboorAlg(std::vector<Vec3d> controlPoints, int x, int interval);
-    void deBoor(std::vector<Vec3d> controlPoints, double t);
-   
+    //Vec3d deboorAlg(std::vector<Vec3d> controlPoints, int x, int interval);
+    Vec3d deBoor(std::vector<Vec3d> controlPoints, double t);
 };
 

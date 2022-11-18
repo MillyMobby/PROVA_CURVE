@@ -4,7 +4,7 @@ bool CurveMath::degenere(int pointsNum) {
 	else return false;
 }
 
-int CurveMath::getKnotsInterval(double t) {
+const int CurveMath::getKnotsInterval(double t) {
 	int n = controlPoints.size();
 	for (int nodeI = 0; nodeI < knots.size(); nodeI++) {
 		if (t >= knots[nodeI] && t <= knots[nodeI + 1]) {
@@ -12,6 +12,14 @@ int CurveMath::getKnotsInterval(double t) {
 		}
 	}
 	return -1;
+}
+
+const std::vector<double> CurveMath::getKnotsVector() {
+	return knots;
+}
+
+const double CurveMath::getKnot(int i) {
+	return knots[i];
 }
 
 void CurveMath::generateKnots(int pointsNum) {
@@ -45,7 +53,7 @@ Vec3d CurveMath::deCasteljau(std::vector<Vec3d> controlPoints) {
 	for (int i = degree + 1; i > 0; i--) {		
 		segments = i - 1;
 		if (segments == 0) { 
-			std::cout << "PUNTO DI DE CASTELJAU: " << controlPoints[0] << std::endl;
+			//std::cout << "PUNTO DI DE CASTELJAU: " << controlPoints[0] << std::endl;
 			return result; 
 		}
 		else {
@@ -80,7 +88,7 @@ std::vector<double> CurveMath::fullInsertion(int knotInterval) {
 	return newKnots;
 }
 
-void CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
+Vec3d CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
 	int m = getKnotsInterval(t);
 	//std::vector<Vec3d> affectedPoints;
 	Vec3d evaluatedPoint = Vec3d(0);
@@ -104,5 +112,6 @@ void CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
 		}
 	}
 	std::cout << "PUNTO DEBOOR_ALG -> "<< evaluatedPoint;
+	return evaluatedPoint;
 }
 

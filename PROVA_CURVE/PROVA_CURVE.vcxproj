@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Configuration.h" />
     <ClInclude Include="CurveGraphics.h" />
     <ClInclude Include="CurveMath.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -154,14 +155,19 @@
     <ClInclude Include="imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="Mat3f.h" />
+    <ClInclude Include="Mat4f.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Vec3d.h" />
     <ClInclude Include="Vec3f.h" />
+    <ClInclude Include="Vec4f.h" />
     <ClInclude Include="Viewer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\librerie\glad\src\glad.c" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="CurveGraphics.cpp" />
     <ClCompile Include="CurveMath.cpp" />
     <ClCompile Include="ImguiController.cpp" />
@@ -172,9 +178,13 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Mat3f.cpp" />
+    <ClCompile Include="Mat4f.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Vec3d.cpp" />
     <ClCompile Include="Vec3f.cpp" />
+    <ClCompile Include="Vec4f.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>

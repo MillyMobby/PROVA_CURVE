@@ -7,8 +7,6 @@ class CurveGraphics
 private:
 	static const int MaxNumPoints = 100;    
 	int _pointsNumber = 0;  
-	
-	//double _controlPolygon[MaxNumPoints][3];
 	double* controlPolygon;// [MaxNumPoints * 3] ;
 	int _selectedVert = -1;
 
@@ -30,9 +28,9 @@ private:
 public:
 	void setCurve();
 	std::vector<Vec3d> controlPointsVector();
-	double getControlPt_X(int i);
-	double getControlPt_Y(int i);
-	double getControlPt_Z(int i);
+	const double& getControlPt_X(int& i);
+	const double& getControlPt_Y(int& i);
+	const double& getControlPt_Z(int& i);
 
 	//inline CurveGraphics& operator=(const CurveGraphics& m) {
 	//	for (int i = 0; i < MaxNumPoints; i++)
@@ -43,11 +41,13 @@ public:
 	//		
 	//	}return *this;
 	//};
-	CurveGraphics() { std::cout << "COSTRUTTOREEEE"; controlPolygon = new double[MaxNumPoints * 3]; };
+	CurveGraphics() { controlPolygon = new double[MaxNumPoints * 3]; };
 	~CurveGraphics(); 
 
 	void initGL();
 	void setupGL();
+	void cleanGL(GLuint& shaderProgram);
+
     void LoadPointsIntoVBO();
 	void clipSpace();
     void AddPoint(double x, double y);
@@ -55,10 +55,11 @@ public:
     void RemoveFirstPoint();
 	void RemoveLastPoint();
 	void renderScene();
+	void renderCurve();
 
-	int getSelectedVert();
+	const int getSelectedVert();
 	void setSelectedVert(int s);
-	int getPointsNumber();
+	const int getPointsNumber();
 
 };
 

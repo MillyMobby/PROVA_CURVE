@@ -24,7 +24,8 @@ const std::string& Shader::getFShader() {
     return _fShader;
 }
 
-GLuint Shader::getShaderProgram() {
+
+GLuint& Shader::getShaderProgram() {
     return _shaderProgram;
 }
 

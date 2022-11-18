@@ -16,6 +16,9 @@
     <Filter Include="File di intestazione\imgui">
       <UniqueIdentifier>{4d37fe5f-dfa8-4382-9ab7-676def2fd3c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LinearAlgebra">
+      <UniqueIdentifier>{fb8ba10e-264c-4ca2-9664-536918b34bde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CurveGraphics.h">
@@ -27,16 +30,10 @@
     <ClInclude Include="Viewer.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Vec3f.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="CurveMath.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec3d.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
@@ -57,6 +54,27 @@
     <ClInclude Include="imgui\imgui_impl_glfw.h">
       <Filter>File di origine</Filter>
     </ClInclude>
+    <ClInclude Include="Mat4f.h">
+      <Filter>LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3f.h">
+      <Filter>LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3d.h">
+      <Filter>LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec4f.h">
+      <Filter>LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="Mat3f.h">
+      <Filter>LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CurveGraphics.cpp">
@@ -68,9 +86,6 @@
     <ClCompile Include="Viewer.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Vec3f.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\librerie\glad\src\glad.c">
       <Filter>File di risorse</Filter>
     </ClCompile>
@@ -78,9 +93,6 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="CurveMath.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="Vec3d.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="ImguiController.cpp">
@@ -105,6 +117,27 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_glfw.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Mat4f.cpp">
+      <Filter>LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec3d.cpp">
+      <Filter>LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec3f.cpp">
+      <Filter>LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec4f.cpp">
+      <Filter>LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="Mat3f.cpp">
+      <Filter>LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
