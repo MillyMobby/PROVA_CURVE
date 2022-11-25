@@ -16,7 +16,10 @@ private:
     std::vector<Vec3d> controlPoints;
 
     int degree;
-    double t = ((double)1 / 3);
+    bool bezier = false;
+    
+    /*double increment = 0.01;
+    int steps = 1 / increment;*/
 
 public:
     CurveMath() {};
@@ -26,15 +29,18 @@ public:
     const int getKnotsInterval(double t);
     const std::vector<double> getKnotsVector();
     const double getKnot(int i);
+    inline int getKnotsSize() const {  return knots.size(); }
+    inline bool isBezier() const { return bezier; }
+    inline void setBezier(bool isBezier) { bezier = isBezier; }
+    inline int getDegree() const { return degree; }
+   // inline double getIncrement() const {   return increment;  }
+    
     void generateKnots(int pointsNum);
     void setControlPoints(std::vector<Vec3d> cp);
     void setDegree(int p);
     std::vector<CurvePoint> BSpline(int u);
-    Vec3d deCasteljau(std::vector<Vec3d> controlPoints);
-    std::vector<double> fullInsertion(int knotInterval);
-    //Vec3d deBoor(int k, int degree, double x, double* knots, std::vector<Vec3d> controlPoints);
-    //Vec3d deBoor(std::vector<Vec3d> controlPoints, double increment, int knotInterval);
-    //Vec3d deboorAlg(std::vector<Vec3d> controlPoints, int x, int interval);
+    Vec3d deCasteljau(std::vector<Vec3d> controlPoints, double t);
+    std::vector<double> fullInsertion(int knotInterval, double t);   
     Vec3d deBoor(std::vector<Vec3d> controlPoints, double t);
 };
 

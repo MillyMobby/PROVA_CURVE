@@ -19,6 +19,9 @@
     <Filter Include="LinearAlgebra">
       <UniqueIdentifier>{fb8ba10e-264c-4ca2-9664-536918b34bde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di origine\imgui_impl">
+      <UniqueIdentifier>{c588ed88-8513-44a2-b65e-c0d96cdda513}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CurveGraphics.h">
@@ -45,15 +48,6 @@
     <ClInclude Include="imgui\imconfig.h">
       <Filter>File di intestazione\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_opengl3.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_glfw.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
     <ClInclude Include="Mat4f.h">
       <Filter>LinearAlgebra</Filter>
     </ClInclude>
@@ -72,8 +66,17 @@
     <ClInclude Include="Scene.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Configuration.h">
+    <ClInclude Include="ImguiController.h">
       <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_glfw.h">
+      <Filter>File di origine\imgui_impl</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3.h">
+      <Filter>File di origine\imgui_impl</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
+      <Filter>File di origine\imgui_impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,12 +116,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>File di intestazione\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="Mat4f.cpp">
       <Filter>LinearAlgebra</Filter>
     </ClCompile>
@@ -137,8 +134,11 @@
     <ClCompile Include="Scene.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Configuration.cpp">
-      <Filter>File di origine</Filter>
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
+      <Filter>File di origine\imgui_impl</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
+      <Filter>File di origine\imgui_impl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

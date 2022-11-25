@@ -72,16 +72,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\librerie\imgui-1.88;D:\librerie\glad\include;D:\librerie\glfw-3.3.7.bin.WIN64\include;D:\librerie\rapidxml-1.13;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\PROVA CURVE\PROVA_CURVE\PROVA_CURVE\imgui;D:\PROVA CURVE\PROVA_CURVE\librerie\glad\include;D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\librerie\imgui-1.88;D:\librerie\glad\include;D:\librerie\glfw-3.3.7.bin.WIN64\include;D:\librerie\rapidxml-1.13;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\PROVA CURVE\PROVA_CURVE\PROVA_CURVE\imgui;D:\PROVA CURVE\PROVA_CURVE\librerie\glad\include;D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -146,9 +146,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Configuration.h" />
     <ClInclude Include="CurveGraphics.h" />
     <ClInclude Include="CurveMath.h" />
+    <ClInclude Include="ImguiController.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_glfw.h" />
@@ -167,7 +167,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\librerie\glad\src\glad.c" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="CurveGraphics.cpp" />
     <ClCompile Include="CurveMath.cpp" />
     <ClCompile Include="ImguiController.cpp" />

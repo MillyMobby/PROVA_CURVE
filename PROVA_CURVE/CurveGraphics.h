@@ -2,19 +2,28 @@
 #include "Vec3f.h"
 #include "Shader.h"
 #include "CurveMath.h"
+
 class CurveGraphics
 {
 private:
 	static const int MaxNumPoints = 100;    
-	int _pointsNumber = 0;  
+	int _pointsNumber = 0;
+	int _curvePointsNumber = 0;
 	double* controlPolygon;// [MaxNumPoints * 3] ;
+	 double increment = 0.01;
+	static const int steps = 100;
+	double curvePoints[steps * 10];
 	int _selectedVert = -1;
 
 	GLuint _VAO = -1; // SONO INT -> perché sono riferimenti// Vertex Array Object - holds info about an array of vertex data;
 	GLuint _VBO = -1;// Vertex Buffer Object - holds an array of data
 	GLuint _EBO = -1;
 
+	GLuint _curveVAO = -1; // SONO INT -> perché sono riferimenti// Vertex Array Object - holds info about an array of vertex data;
+	GLuint _curveVBO = -1;// Vertex Buffer Object - holds an array of data
+	
 	CurveMath curveMath;
+	
 	
 	unsigned int _stride = 3;
 	const unsigned int _posLocation = 0;   // "location = 0"  vertex shader 
@@ -22,12 +31,15 @@ private:
 	
 	Vec3f _pointsColor = Vec3f(0.0f, 1.0f, 1.0f); 
 	Vec3f _lineColor = Vec3f(1.0f, 0.0f, 1.0f);
+	Vec3f _curveColor = Vec3f(1.0f, 0.7f, 1.0f);
 	
 	bool example = true;
 
 public:
 	void setCurve();
+	void check();
 	std::vector<Vec3d> controlPointsVector();
+	std::vector<Vec3d>curvePointsVector();
 	const double& getControlPt_X(int& i);
 	const double& getControlPt_Y(int& i);
 	const double& getControlPt_Z(int& i);
@@ -41,21 +53,30 @@ public:
 	//		
 	//	}return *this;
 	//};
-	CurveGraphics() { controlPolygon = new double[MaxNumPoints * 3]; };
+	CurveGraphics() {
+		controlPolygon = new double[MaxNumPoints * 3]; 
+		//curvePoints = new double[steps * 3];
+		curveMath.setDegree(3); // grado di default
+	};
 	~CurveGraphics(); 
 
 	void initGL();
+	void initCurveGL();
 	void setupGL();
 	void cleanGL(GLuint& shaderProgram);
 
     void LoadPointsIntoVBO();
-	void clipSpace();
+	void LoadPointsIntoCurveVBO();
     void AddPoint(double x, double y);
+	void AddCurvePoint(double x, double y);	
     void ChangePoint(int i, double x, double y);
-    void RemoveFirstPoint();
-	void RemoveLastPoint();
+	void ChangeCurvePoint(int i, double x, double y);
+    void RemoveFirstPoint(); //da aggiornare anche per la curva
+	void RemoveLastPoint();//da aggiornare anche per la curva
+
 	void renderScene();
 	void renderCurve();
+	void generateFullCurve();
 
 	const int getSelectedVert();
 	void setSelectedVert(int s);

@@ -18,35 +18,13 @@ void Viewer::start() {
 		shader.processShader();
 		graphics->setupGL();
 		graphics->initGL();
+		graphics->initCurveGL();
 		//scene.initScene();
 		/*
 		*/
-					float vertices[] = {
-						// positions         // colors
-						 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-						-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-						 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-					};
-
-					unsigned int VBO, VAO;
-					glGenVertexArrays(1, &VAO);
-					glGenBuffers(1, &VBO);
-					// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-					glBindVertexArray(VAO);
-
-					glBindBuffer(GL_ARRAY_BUFFER, VBO);
-					glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-					// position attribute
-					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-					glEnableVertexAttribArray(0);
-					// color attribute
-					glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-					glEnableVertexAttribArray(1);
-
 		while (!glfwWindowShouldClose(_window)) {
 			//processMouseInput();		
-			glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+			glClearColor(_imgui.clear_color.x * _imgui.clear_color.w, _imgui.clear_color.y * _imgui.clear_color.w, _imgui.clear_color.z * _imgui.clear_color.w, _imgui.clear_color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
 			const float clearDepth = 1.0f;
 			glClearBufferfv(GL_DEPTH, 0, &clearDepth);	
@@ -56,15 +34,15 @@ void Viewer::start() {
 
 			////glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
 			graphics->renderScene();
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-			//windowShouldCloseIMGUI();
+			
+			graphics->renderCurve();
+			windowShouldCloseIMGUI();
 			
 			glfwPollEvents();
 			glfwSwapBuffers(_window);
 			
 		}
-		//_imgui.cleanupIMGUI();
+		_imgui.cleanupIMGUI();
 		graphics->cleanGL(shader.getShaderProgram());
 		//scene->clean();
 		Clean();
@@ -100,9 +78,8 @@ bool Viewer::init() {
 				//glLoadIdentity(); // same as above comment
 				//glfwSetFramebufferSizeCallback(_window, Viewer::frameBufferSizeCB);
 	glfwSetWindowUserPointer(_window, (void*)&_windowSize);
-	setupCallbacks();
-	
-	//_imgui.setIMGUI(_window);
+	setupCallbacks();	
+	_imgui.setIMGUI(_window);
 	return 1;
 }
 //void Viewer::setScene(Scene& currentScene) { scene = currentScene; }
@@ -140,13 +117,13 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	glfwGetCursorPos(window, &xpos, &ypos);
 	// clip space [-1,1]. 
 	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
-	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); //----------------->  QUESTA ROBA L'HO MESSA NEL VERTEX SHADER
+	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); 
 
 	//scene->handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
 		graphics->AddPoint(/*xpos, ypos*/clipX, clipY);
-		graphics->setCurve();
+		graphics->check(); // setCurve();
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		if (action == GLFW_PRESS) {
@@ -179,6 +156,7 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	if (graphics->getSelectedVert() == -1) { return; }
 	//scene->updatePoints( dotX, dotY);
 	graphics->ChangePoint(graphics->getSelectedVert(), dotX, dotY);
+	//graphics->updateCurvePoints     magari con deboor locale (?)
 }
 
 void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -194,7 +172,7 @@ void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			graphics->RemoveFirstPoint();
 			if (graphics->getSelectedVert() < 0) {
-				graphics->setSelectedVert(graphics->getSelectedVert());
+				//graphics->setSelectedVert(graphics->getSelectedVert());
 			}		
 			else graphics->setSelectedVert(-1);
 		}
