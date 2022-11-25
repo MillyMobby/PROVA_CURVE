@@ -4,13 +4,16 @@
 #include "ImguiController.h"
 #include <math.h>
 #include "Scene.h"
-CurveGraphics* graphics = new CurveGraphics();
+CurveGraphics* graphics = new CurveGraphics();ImguiController _imgui;
+float currentFrame = static_cast<float>(glfwGetTime());
+    float deltaTime = 0.0f;	// Time between current frame and last frame
+    float lastFrame = 0.0f;
  //Scene* scene ;
 
 struct WindowSize {
 
 public:
-
+    
     WindowSize() { isChanged = false; width = 1280; height = 720; }
     bool isChanged;
     int width;
@@ -19,11 +22,12 @@ public:
 }; 
 class Viewer
 {
+    
     //WINDOW
     GLFWwindow* _window = nullptr;   
     WindowSize _windowSize;
     Shader shader;
-    ImguiController _imgui;
+    
     //Scene scene;
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);

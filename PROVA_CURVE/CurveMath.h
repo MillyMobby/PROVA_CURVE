@@ -42,5 +42,8 @@ public:
     Vec3d deCasteljau(std::vector<Vec3d> controlPoints, double t);
     std::vector<double> fullInsertion(int knotInterval, double t);   
     Vec3d deBoor(std::vector<Vec3d> controlPoints, double t);
+    Vec3d deBoorModify(std::vector<Vec3d> controlPoints, int knotInterval, double t);
+
+    void curvePointsInSupport(std::vector<Vec3d> curvePointsVec);
 };
 

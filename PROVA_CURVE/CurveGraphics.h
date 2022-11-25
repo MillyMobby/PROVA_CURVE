@@ -37,7 +37,7 @@ private:
 
 public:
 	void setCurve();
-	void check();
+	void check(int deg, bool makeBezier);
 	std::vector<Vec3d> controlPointsVector();
 	std::vector<Vec3d>curvePointsVector();
 	const double& getControlPt_X(int& i);
@@ -70,13 +70,13 @@ public:
     void AddPoint(double x, double y);
 	void AddCurvePoint(double x, double y);	
     void ChangePoint(int i, double x, double y);
+	void modifyCurve(/*int i, double x, double y*/);
 	void ChangeCurvePoint(int i, double x, double y);
     void RemoveFirstPoint(); //da aggiornare anche per la curva
 	void RemoveLastPoint();//da aggiornare anche per la curva
 
 	void renderScene();
-	void renderCurve();
-	void generateFullCurve();
+	void renderCurve();	
 
 	const int getSelectedVert();
 	void setSelectedVert(int s);

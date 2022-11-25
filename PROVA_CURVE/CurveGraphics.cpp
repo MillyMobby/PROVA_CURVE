@@ -51,7 +51,7 @@ void CurveGraphics::initGL() {
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
+    initCurveGL();
     
 }
 
@@ -126,11 +126,16 @@ void CurveGraphics::AddPoint(double x, double y)
     
 }
 
-void CurveGraphics::check() {
-    // curveMath.setDegree(_pointsNumber - 1);   
+void CurveGraphics::check(int deg, bool makeBezier) {
+    _lineColor = Vec3f(0.0f, 0.5f, 0.7f);
+    
+    if (makeBezier == true) { curveMath.setDegree(_pointsNumber-1); }
+    else curveMath.setDegree(deg);   
  if (curveMath.degenere(_pointsNumber) == false) {
+     //_lineColor =Vec3f(1.0f, 0.0f, 1.0f);
             std::cout << "INIZIO A GENERARE LA CURVA \n";
-            generateFullCurve();         
+            // generateFullCurve();   
+           modifyCurve();
         }
 }
 void CurveGraphics::AddCurvePoint(double x, double y) {
@@ -149,8 +154,47 @@ void CurveGraphics::ChangePoint(int i, double x, double y)
         controlPolygon[i * _stride + 1] = y;
     }
     LoadPointsIntoVBO();
-}
 
+    
+
+}
+void CurveGraphics::modifyCurve(/*int i, double x, double y*/) {
+
+    double uinc = 0.01;
+    std::vector<Vec3d> controlPoints = controlPointsVector();
+   
+    int c = 0;
+    Vec3d point = Vec3d(0);
+    curveMath.generateKnots(_pointsNumber);
+
+    if (curveMath.degenere(_pointsNumber) == false) {
+        // if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2) {
+        //std::cout << "curva di bezier \n";
+        for (double u = curveMath.getKnot(curveMath.getDegree() - 1) + uinc; u <= curveMath.getKnot(_pointsNumber); u += uinc) {
+            if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2) {
+                curveMath.setBezier(true);
+                point = curveMath.deCasteljau(controlPoints, u);
+                //ChangeCurvePoint(c, point.x, point.y);
+                //AddCurvePoint(point.x, point.y);
+            }
+            else {
+                point = curveMath.deBoor(controlPoints, double(u));
+                curveMath.setBezier(false);
+                
+            }if (_curvePointsNumber > 0 && c < _curvePointsNumber) {
+                     ChangeCurvePoint(c, point.x, point.y);
+                }
+                else if (_curvePointsNumber >= 0 && c >= _curvePointsNumber) {
+                    AddCurvePoint(point.x, point.y);
+                }
+            c++;
+            //std::cout << "punti della curva " << point << std::endl;
+        }
+    }
+
+            
+    
+}
 void CurveGraphics::ChangeCurvePoint(int i, double x, double y)
 {
     if (i >= 0 && i < _curvePointsNumber) {
@@ -188,10 +232,10 @@ void CurveGraphics::renderScene() {
     }
     // renderCurve();
     // punti
-   /* glVertexAttrib3f(_colorLocation, _pointsColor.x, _pointsColor.y, _pointsColor.z);		
+    glVertexAttrib3f(_colorLocation, _pointsColor.x, _pointsColor.y, _pointsColor.z);		
     glDrawArrays(GL_POINTS, 0, _pointsNumber);
  
- glBindVertexArray(0);  */
+ glBindVertexArray(0);  
    
     
   
@@ -206,6 +250,7 @@ void CurveGraphics::renderCurve() {
     if (_curvePointsNumber > 0) {
         glBindVertexArray(_curveVAO);
         glBegin(GL_LINE_STRIP);
+        glLineWidth(2);
         glVertexAttrib3f(_colorLocation, _curveColor.x, _curveColor.y, _curveColor.z);		// magenta
         glDrawArrays(GL_LINE_STRIP, 0, _curvePointsNumber);  
        // glBindVertexArray(0);   
@@ -218,43 +263,6 @@ void CurveGraphics::renderCurve() {
 }
 
 
-void CurveGraphics::generateFullCurve() {
-   double uinc = 0.01;
-    int p = 3;
-    std::vector<Vec3d> controlPoints = controlPointsVector();
-    //curveMath.setControlPoints(pr);
-   curveMath.setDegree(p);
-   int c = 0;
-   Vec3d point = Vec3d(0);
-    // curveMath.setDegree(_pointsNumber - 1);
-    //curveMath.deCasteljau(prova); 
-    curveMath.generateKnots(_pointsNumber);
-    
-    if (curveMath.degenere(_pointsNumber) == false) {
-       // if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2) {
-            std::cout << "curva di bezier \n";
-            for (double u = /*uinc*/curveMath.getKnot(p - 1) + uinc; u <=/*1*/ curveMath.getKnot(_pointsNumber); u += uinc) {
-                if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2) {
-                    curveMath.setBezier(true);
-                    point = curveMath.deCasteljau(controlPoints,u);
-                    AddCurvePoint(point.x, point.y);
-                }
-                else {                 
-                    point = curveMath.deBoor(controlPoints, double(u));
-                    if (_curvePointsNumber>0 && c< _curvePointsNumber) {
-                       
-                        curveMath.setBezier(false);                       
-                        ChangeCurvePoint(c, point.x, point.y);
-                    }
-                   else if (_curvePointsNumber > 0 && c >= _curvePointsNumber){
-                        AddCurvePoint(point.x, point.y);
-                    }                   
-                }
-                c++;
-                //std::cout << "punti della curva " << point << std::endl;
-        }
-    }
-}
 
 std::vector<Vec3d> CurveGraphics::controlPointsVector() {
     

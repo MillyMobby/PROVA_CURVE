@@ -18,11 +18,12 @@ void Viewer::start() {
 		shader.processShader();
 		graphics->setupGL();
 		graphics->initGL();
-		graphics->initCurveGL();
+		//graphics->initCurveGL();
 		//scene.initScene();
 		/*
 		*/
 		while (!glfwWindowShouldClose(_window)) {
+			
 			//processMouseInput();		
 			glClearColor(_imgui.clear_color.x * _imgui.clear_color.w, _imgui.clear_color.y * _imgui.clear_color.w, _imgui.clear_color.z * _imgui.clear_color.w, _imgui.clear_color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -31,10 +32,10 @@ void Viewer::start() {
 
 			//scene->run();
 			glUseProgram(shader.getShaderProgram());	
-
+			graphics->check(_imgui.grado, _imgui.makeBezier);
 			////glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
 			graphics->renderScene();
-			
+			//graphics->generateFullCurve();
 			graphics->renderCurve();
 			windowShouldCloseIMGUI();
 			
@@ -118,36 +119,46 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	// clip space [-1,1]. 
 	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
 	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); 
+	auto& io = ImGui::GetIO();
 
+	if (io.WantCaptureMouse || io.WantCaptureKeyboard) { return; }
+	else {
 	//scene->handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
-		graphics->AddPoint(/*xpos, ypos*/clipX, clipY);
-		graphics->check(); // setCurve();
-	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-		if (action == GLFW_PRESS) {
-			double minDist = 10000.0;
-			int minI;
-			for (int i = 0; i < graphics->getPointsNumber(); i++) {
-				double thisDistX =  (/*xpos*/clipX - graphics->getControlPt_X(i)) * 0.5f *(double)windowSize->width;
-				double thisDistY =  (/*ypos*/clipY - graphics->getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
-				double thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
-				if (thisDist < minDist) {
-					minDist = thisDist;
-					minI = i;
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
+			graphics->AddPoint(/*xpos, ypos*/clipX, clipY);
+			//graphics->check(_imgui.i); // setCurve();
+		}
+		else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+			if (action == GLFW_PRESS) {
+				double minDist = 10000.0;
+				int minI;
+				for (int i = 0; i < graphics->getPointsNumber(); i++) {
+					double thisDistX =  (/*xpos*/clipX - graphics->getControlPt_X(i)) * 0.5f *(double)windowSize->width;
+					double thisDistY =  (/*ypos*/clipY - graphics->getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
+					double thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
+					if (thisDist < minDist) {
+						minDist = thisDist;
+						minI = i;
+					}
+				}
+				if (minDist <= 10.0) {     				
+					graphics->setSelectedVert(minI);
+					graphics->ChangePoint(minI, /*xpos, ypos*/clipX, clipY);
+				
+				
+				
+				}//graphics->modifyCurve(minI);
+			
+			}
+				else if (action == GLFW_RELEASE) {
+					graphics->modifyCurve(/*graphics->getSelectedVert(), clipX, clipY*/);
+					graphics->setSelectedVert(-1);//graphics->generateFullCurve();
 				}
 			}
-			if (minDist <= 10.0) {     				
-				graphics->setSelectedVert(minI);
-				graphics->ChangePoint(minI, /*xpos, ypos*/clipX, clipY);
-			}
-		}
-		else if (action == GLFW_RELEASE) {
-			graphics->setSelectedVert(-1);
-		}
 	}
-}
+	
+	}//
 
 void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	WindowSize* windowSize = (WindowSize*)glfwGetWindowUserPointer(window);
@@ -156,6 +167,7 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	if (graphics->getSelectedVert() == -1) { return; }
 	//scene->updatePoints( dotX, dotY);
 	graphics->ChangePoint(graphics->getSelectedVert(), dotX, dotY);
+	graphics->modifyCurve(/*graphics->getSelectedVert(), dotX, dotY*/);
 	//graphics->updateCurvePoints     magari con deboor locale (?)
 }
 

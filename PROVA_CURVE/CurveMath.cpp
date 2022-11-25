@@ -26,22 +26,15 @@ const double CurveMath::getKnot(int i) {
 void CurveMath::generateKnots(int pointsNum) {
 	knots.clear();
 
-	for (int i = 0; i <= degree; i++) { 
-		knots.push_back(0); std::cout << 0 << " ";}
+	for (int i = 0; i <= degree; i++) { knots.push_back(0); }
 
 	int middle = (pointsNum -1)- degree;
-	/*if (middle <= 0) { std::cout << " degenere " << std::endl; }
-	else 
-	{*/
-		for (int j = 0; j <= middle; j++) {
-			double h = double(j + 1) / (middle + 1);
-			knots.push_back(double(j + 1) / (middle + 1));
-			std::cout << " " << h << " ";
-		}
-	//}
-	for (int k = 0; k <degree; k++) { 
-		knots.push_back(1);	 
-		std::cout << " " << 1 << " "; }
+	for (int j = 0; j <= middle; j++) {
+		double h = double(j + 1) / (middle + 1);
+		knots.push_back(double(j + 1) / (middle + 1));
+		
+	}	
+	for (int k = 0; k <degree; k++) { knots.push_back(1);  }
 }
 
 void CurveMath::setDegree(int p) { degree = p; }
@@ -119,7 +112,44 @@ Vec3d CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
 		newVec.clear();
 		count = 0;
 	}
-	std::cout << "PUNTO DEBOOR_ALG -> "<< evaluatedPoint;
 	return affectedPoints[0];
 }
 
+//Vec3d CurveMath::deBoorModify(std::vector<Vec3d> controlPoints, int m,double t) {
+//	std::vector<Vec3d> affectedPoints, newVec;
+//	Vec3d evaluatedPoint = Vec3d(0);
+//	int count = 0, c = 0;
+//	/*std::cout << "P = 3, NODI TOTALI = " << knots.size() << std::endl;
+//	std::cout << "INTERVALLO NODO DI INDICE -> " << m << std::endl;
+//	std::cout << "SUPPORTO NEI NODI [ " << m  << ", "<< m + degree + 1<< ") "<< std::endl;	*/
+//	//affectedPoints.push_back(controlPoints[m - degree]);
+//	for (int i = m - degree; i < m + 1; i++) {
+//		c++;
+//		affectedPoints.push_back(controlPoints[i]);
+//		//std::cout << "PUNTO DI CONTROLLO DI INDICE  "<< i << " = " << controlPoints[i] << " nel nuovo vettore è indice ->" << c << "\n";		
+//	}
+//
+//	for (int r = 1; r <= degree; r++) {
+//		for (int i = m - degree + r; i <= m; i++) {
+//			//std::cout << " r = " << r << " i = " << i << std::endl;			
+//			double omega = (t - knots[i]) / (knots[i + 1 + degree - r] - knots[i]);
+//
+//			//std::cout << "valori omega " << i << "," << r << " ------> " << omega << std::endl;
+//			evaluatedPoint = Vec3d::lerp(/*controlPoints*/affectedPoints[/*i - 1*/count], /*controlPoints*/affectedPoints[/*i*/count + 1], omega);
+//			newVec.push_back(evaluatedPoint);
+//			count++;
+//		}
+//		affectedPoints = newVec;
+//		evaluatedPoint = affectedPoints[0];
+//		newVec.clear();
+//		count = 0;
+//	}
+//	std::cout << "PUNTO DEBOOR_ALG -> " << evaluatedPoint;
+//	return affectedPoints[0];
+//}
+//
+//void CurveMath::curvePointsInSupport(std::vector<Vec3d> curvePointsVec) {
+//	/*for (int i = 0; i < curvePointsVec.size(); i++) {
+//	if (curvePointsVec[i].x)
+//	}*/
+//}
