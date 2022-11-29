@@ -72,16 +72,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\PROVA CURVE\PROVA_CURVE\PROVA_CURVE\imgui;D:\PROVA CURVE\PROVA_CURVE\librerie\glad\include;D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)librerie\imgui-1.88;$(SolutionDir)imgui;$(SolutionDir)librerie\glad\include;$(SolutionDir)librerie\glfw-3.3.7.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\PROVA CURVE\PROVA_CURVE\PROVA_CURVE\imgui;D:\PROVA CURVE\PROVA_CURVE\librerie\glad\include;D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\PROVA CURVE\PROVA_CURVE\librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)librerie\imgui-1.88;$(SolutionDir)imgui;$(SolutionDir)librerie\glad\include;$(SolutionDir)librerie\glfw-3.3.7.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)librerie\glfw-3.3.7.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -155,8 +155,10 @@
     <ClInclude Include="imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="Mat3f.h" />
     <ClInclude Include="Mat4f.h" />
+    <ClInclude Include="NurbsMath.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Vec3d.h" />
@@ -179,6 +181,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Mat3f.cpp" />
     <ClCompile Include="Mat4f.cpp" />
+    <ClCompile Include="NurbsMath.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Vec3d.cpp" />

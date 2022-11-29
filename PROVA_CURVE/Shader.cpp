@@ -150,7 +150,7 @@ void Shader::draw() {
 }
 
 void Shader::processShader() {
-    
+    setName("color");
     setVShader("color.vert");
     setFShader("color.frag");
     /*std::cout << "path1 " << bg.getVShader();

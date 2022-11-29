@@ -14,16 +14,12 @@ void main() {
 
 void Viewer::start() {
 		init();
-		shader.setName("color");
 		shader.processShader();
 		graphics->setupGL();
 		graphics->initGL();
-		//graphics->initCurveGL();
 		//scene.initScene();
-		/*
-		*/
-		while (!glfwWindowShouldClose(_window)) {
-			
+
+		while (!glfwWindowShouldClose(_window)) {			
 			//processMouseInput();		
 			glClearColor(_imgui.clear_color.x * _imgui.clear_color.w, _imgui.clear_color.y * _imgui.clear_color.w, _imgui.clear_color.z * _imgui.clear_color.w, _imgui.clear_color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -32,22 +28,17 @@ void Viewer::start() {
 
 			//scene->run();
 			glUseProgram(shader.getShaderProgram());	
-			graphics->check(_imgui.grado, _imgui.makeBezier);
-			////glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
-			graphics->renderScene();
-			//graphics->generateFullCurve();
-			graphics->renderCurve();
+			graphics->rendering(_imgui.grado, _imgui.makeBezier,_imgui.makeNURBS,_imgui.weights);					
+
 			windowShouldCloseIMGUI();
 			
 			glfwPollEvents();
-			glfwSwapBuffers(_window);
-			
+			glfwSwapBuffers(_window);			
 		}
 		_imgui.cleanupIMGUI();
 		graphics->cleanGL(shader.getShaderProgram());
 		//scene->clean();
-		Clean();
-		
+		Clean();		
 }
 
 bool Viewer::init() {
@@ -86,8 +77,7 @@ bool Viewer::init() {
 //void Viewer::setScene(Scene& currentScene) { scene = currentScene; }
 void Viewer::processInput() {}
 
-bool Viewer::Clean() {
-	
+bool Viewer::Clean() {	
 	glfwTerminate();
 	return true;
 }
@@ -126,8 +116,8 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	//scene->handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 			std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
-			graphics->AddPoint(/*xpos, ypos*/clipX, clipY);
-			//graphics->check(_imgui.i); // setCurve();
+			graphics->AddPoint(/*xpos, ypos*/clipX, clipY);	
+			_imgui.maxDegree = graphics->getPointsNumber() - 1;
 		}
 		else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 			if (action == GLFW_PRESS) {
@@ -145,20 +135,12 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 				if (minDist <= 10.0) {     				
 					graphics->setSelectedVert(minI);
 					graphics->ChangePoint(minI, /*xpos, ypos*/clipX, clipY);
-				
-				
-				
-				}//graphics->modifyCurve(minI);
-			
+				}			
 			}
-				else if (action == GLFW_RELEASE) {
-					graphics->modifyCurve(/*graphics->getSelectedVert(), clipX, clipY*/);
-					graphics->setSelectedVert(-1);//graphics->generateFullCurve();
-				}
-			}
-	}
-	
-	}//
+				else if (action == GLFW_RELEASE) { graphics->setSelectedVert(-1); }
+		}
+	}	
+}
 
 void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	WindowSize* windowSize = (WindowSize*)glfwGetWindowUserPointer(window);
@@ -167,8 +149,6 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	if (graphics->getSelectedVert() == -1) { return; }
 	//scene->updatePoints( dotX, dotY);
 	graphics->ChangePoint(graphics->getSelectedVert(), dotX, dotY);
-	graphics->modifyCurve(/*graphics->getSelectedVert(), dotX, dotY*/);
-	//graphics->updateCurvePoints     magari con deboor locale (?)
 }
 
 void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -183,6 +163,7 @@ void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 		if (graphics->getSelectedVert() != 0) 
 		{
 			graphics->RemoveFirstPoint();
+			_imgui.maxDegree = graphics->getPointsNumber() - 1;
 			if (graphics->getSelectedVert() < 0) {
 				//graphics->setSelectedVert(graphics->getSelectedVert());
 			}		
@@ -190,7 +171,8 @@ void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 	}
 	else if (key == GLFW_KEY_L) {
-			graphics->RemoveLastPoint();	
+			graphics->RemoveLastPoint();
+			_imgui.maxDegree = graphics->getPointsNumber() - 1;
 	}
 }
 

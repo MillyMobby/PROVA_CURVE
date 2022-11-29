@@ -78,6 +78,12 @@
     <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
       <Filter>File di origine\imgui_impl</Filter>
     </ClInclude>
+    <ClInclude Include="NurbsMath.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CurveGraphics.cpp">
@@ -139,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
       <Filter>File di origine\imgui_impl</Filter>
+    </ClCompile>
+    <ClCompile Include="NurbsMath.cpp">
+      <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

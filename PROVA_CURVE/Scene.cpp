@@ -23,7 +23,7 @@ void Scene::handleMouseEvents(int button, int action, int clipX, int clipY, int 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		//std::cout << " mouse in " << xpos << ", " << ypos << std::endl;
 		graphics->AddPoint(/*xpos, ypos*/clipX, clipY);
-		graphics->setCurve();
+		
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		if (action == GLFW_PRESS) {

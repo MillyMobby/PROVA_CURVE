@@ -4,7 +4,8 @@
 #include "ImguiController.h"
 #include <math.h>
 #include "Scene.h"
-CurveGraphics* graphics = new CurveGraphics();ImguiController _imgui;
+CurveGraphics* graphics = new CurveGraphics();
+ImguiController _imgui;
 float currentFrame = static_cast<float>(glfwGetTime());
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f;
@@ -21,24 +22,20 @@ public:
 
 }; 
 class Viewer
-{
-    
+{   
     //WINDOW
     GLFWwindow* _window = nullptr;   
     WindowSize _windowSize;
     Shader shader;
     
     //Scene scene;
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    
+   
 public:
 
     bool Clean();
     void processInput();
     void start();
     bool init();
-    void setShader(Shader& s);
 
     void windowShouldCloseIMGUI();   
 
@@ -50,6 +47,5 @@ public:
     static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     static void cursorPosCallback(GLFWwindow* window, double x, double y);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
 };
 

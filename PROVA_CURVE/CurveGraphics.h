@@ -10,7 +10,6 @@ private:
 	int _pointsNumber = 0;
 	int _curvePointsNumber = 0;
 	double* controlPolygon;// [MaxNumPoints * 3] ;
-	 double increment = 0.01;
 	static const int steps = 100;
 	double curvePoints[steps * 10];
 	int _selectedVert = -1;
@@ -33,11 +32,11 @@ private:
 	Vec3f _lineColor = Vec3f(1.0f, 0.0f, 1.0f);
 	Vec3f _curveColor = Vec3f(1.0f, 0.7f, 1.0f);
 	
-	bool example = true;
+	
 
 public:
-	void setCurve();
-	void check(int deg, bool makeBezier);
+	
+	void rendering(int &deg, bool makeBezier, bool makeNURBS, std::vector<float>& w);
 	std::vector<Vec3d> controlPointsVector();
 	std::vector<Vec3d>curvePointsVector();
 	const double& getControlPt_X(int& i);
@@ -56,9 +55,9 @@ public:
 	CurveGraphics() {
 		controlPolygon = new double[MaxNumPoints * 3]; 
 		//curvePoints = new double[steps * 3];
-		curveMath.setDegree(3); // grado di default
+		curveMath.setDegree(2); // grado di default
 	};
-	~CurveGraphics(); 
+	~CurveGraphics();
 
 	void initGL();
 	void initCurveGL();
@@ -70,10 +69,14 @@ public:
     void AddPoint(double x, double y);
 	void AddCurvePoint(double x, double y);	
     void ChangePoint(int i, double x, double y);
-	void modifyCurve(/*int i, double x, double y*/);
+	void modifyCurve(std::vector<float>& w/*int i, double x, double y*/);
 	void ChangeCurvePoint(int i, double x, double y);
-    void RemoveFirstPoint(); //da aggiornare anche per la curva
-	void RemoveLastPoint();//da aggiornare anche per la curva
+
+	void addWeights(std::vector<float> w);
+	void removeWeights(std::vector<float> w);
+
+    void RemoveFirstPoint(); 
+	void RemoveLastPoint();
 
 	void renderScene();
 	void renderCurve();	

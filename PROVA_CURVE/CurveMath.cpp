@@ -5,10 +5,16 @@ bool CurveMath::degenere(int pointsNum) {
 }
 
 const int CurveMath::getKnotsInterval(double t) {
-	//int n = controlPoints.size();
-	for (int nodeI = 0; nodeI < knots.size(); nodeI++) {
-		if (t >= knots[nodeI] && t < knots[nodeI + 1]) {
-			return nodeI;
+	int n = knots.size()- 1;
+	
+
+	if (t == knots.back()) return n;
+	else 
+	{
+		for (int nodeI = 0; nodeI < knots.size(); nodeI++) {
+			if (t >= knots[nodeI] && t < knots[nodeI + 1]) {
+				return nodeI;
+			}
 		}
 	}
 	return -1;
@@ -39,7 +45,7 @@ void CurveMath::generateKnots(int pointsNum) {
 
 void CurveMath::setDegree(int p) { degree = p; }
 
-Vec3d CurveMath::deCasteljau(std::vector<Vec3d> controlPoints, double t) {
+Vec3d CurveMath::deCasteljau(std::vector<Vec3d> controlPoints, double t, std::vector<float> w) {
 	// p iterazioni
 	std::vector<Vec3d> temporaryPoints;
 	Vec3d result;
@@ -52,7 +58,7 @@ Vec3d CurveMath::deCasteljau(std::vector<Vec3d> controlPoints, double t) {
 		}
 		else {
 			for (int j = 0; j < segments; j++) {				
-				Vec3d lerp = Vec3d::lerp(controlPoints[j], controlPoints[j + 1], t);
+				Vec3d lerp = Vec3d::lerp(controlPoints[j]*w[j], controlPoints[j + 1]*w[j+1], t);
 				//std::cout << "LERP tra " << controlPoints[j] << " e "<< controlPoints[j + 1] << " ------> " << lerp << std::endl;
 				temporaryPoints.push_back(lerp);			
 			}
@@ -82,28 +88,28 @@ std::vector<double> CurveMath::fullInsertion(int knotInterval, double t) {
 	return newKnots;
 }
 
-Vec3d CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
+Vec3d CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t, std::vector<float> w) {
 	int m = getKnotsInterval(t);
 	std::vector<Vec3d> affectedPoints,newVec;
 	Vec3d evaluatedPoint = Vec3d(0);
 	int count = 0,c=0;
-	/*std::cout << "P = 3, NODI TOTALI = " << knots.size() << std::endl;
+
+	/*
 	std::cout << "INTERVALLO NODO DI INDICE -> " << m << std::endl;
 	std::cout << "SUPPORTO NEI NODI [ " << m  << ", "<< m + degree + 1<< ") "<< std::endl;	*/
 	//affectedPoints.push_back(controlPoints[m - degree]);
 	for (int i = m - degree; i < m + 1; i++) {
 		c++;
-		affectedPoints.push_back(controlPoints[i]);
-		//std::cout << "PUNTO DI CONTROLLO DI INDICE  "<< i << " = " << controlPoints[i] << " nel nuovo vettore è indice ->" << c << "\n";		
+		affectedPoints.push_back(controlPoints[i]*w[i]);
+			
 	}
 	
 	for (int r = 1; r <= degree; r++) {
 		for (int i = m - degree + r; i <= m; i++) {
-			//std::cout << " r = " << r << " i = " << i << std::endl;			
+			
 			double omega = (t - knots[i]) / (knots[i + 1 + degree - r] - knots[i]);
 			
-			//std::cout << "valori omega " << i << "," << r << " ------> " << omega << std::endl;
-			evaluatedPoint = Vec3d::lerp(/*controlPoints*/affectedPoints[/*i - 1*/count], /*controlPoints*/affectedPoints[/*i*/count+1], omega);
+			evaluatedPoint = Vec3d::lerp(affectedPoints[count], affectedPoints[count+1], omega);
 			newVec.push_back(evaluatedPoint);
 			count++;
 		}
@@ -115,6 +121,21 @@ Vec3d CurveMath::deBoor(std::vector<Vec3d> controlPoints, double t ) {
 	return affectedPoints[0];
 }
 
+void CurveMath::addWeights(std::vector<float> w, std::vector<Vec3d> controlPol) {
+	for (int i = 0; i < controlPol.size(); i++) {
+		controlPoints[i].x = controlPol[i].x * w[i];
+		controlPoints[i].y = controlPol[i].y * w[i];
+		controlPoints[i].z = w[i];
+	}
+}
+
+void CurveMath::removeWeights(std::vector<float> w, std::vector<Vec3d> controlPol) {
+	for (int i = 0; i < controlPol.size(); i++) {
+		controlPoints[i].x = controlPol[i].x / controlPoints[i].z;
+		controlPoints[i].y = controlPol[i].y / controlPoints[i].z;
+		controlPoints[i].z = w[i];
+	}
+}
 //Vec3d CurveMath::deBoorModify(std::vector<Vec3d> controlPoints, int m,double t) {
 //	std::vector<Vec3d> affectedPoints, newVec;
 //	Vec3d evaluatedPoint = Vec3d(0);

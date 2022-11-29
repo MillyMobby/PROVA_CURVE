@@ -13,7 +13,7 @@ class CurveMath
 private:
     std::vector<CurvePoint> Curve;
     std::vector<double> knots;		
-    std::vector<Vec3d> controlPoints;
+    std::vector<Vec3d> controlPoints; //FORSE è MEGLIO MODIFICARE I PESI SOLO QUI
 
     int degree;
     bool bezier = false;
@@ -39,11 +39,14 @@ public:
     void setControlPoints(std::vector<Vec3d> cp);
     void setDegree(int p);
     std::vector<CurvePoint> BSpline(int u);
-    Vec3d deCasteljau(std::vector<Vec3d> controlPoints, double t);
+    Vec3d deCasteljau(std::vector<Vec3d> controlPoints, double t, std::vector<float> w);
     std::vector<double> fullInsertion(int knotInterval, double t);   
-    Vec3d deBoor(std::vector<Vec3d> controlPoints, double t);
+    Vec3d deBoor(std::vector<Vec3d> controlPoints, double t, std::vector<float> w);
     Vec3d deBoorModify(std::vector<Vec3d> controlPoints, int knotInterval, double t);
 
     void curvePointsInSupport(std::vector<Vec3d> curvePointsVec);
+
+    void addWeights(std::vector<float> w, std::vector<Vec3d> controlPol);
+    void removeWeights(std::vector<float> w, std::vector<Vec3d> controlPol);
 };
 
