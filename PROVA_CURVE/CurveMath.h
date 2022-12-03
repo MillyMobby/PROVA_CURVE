@@ -8,10 +8,11 @@ struct CurvePoint
     Vec3d B; // Binormal (unit)
 };
 
+
 class CurveMath
 {
 private:
-    std::vector<CurvePoint> Curve;
+    std::vector<int> multiplicities;
     std::vector<double> knots;		
     std::vector<Vec3d> controlPoints; //FORSE è MEGLIO MODIFICARE I PESI SOLO QUI
 
@@ -28,6 +29,15 @@ public:
     bool degenere(int pointsNum);
     const int getKnotsInterval(double t);
     const std::vector<double> getKnotsVector();
+
+    std::vector<int> getMultiplicityVector();
+    void editMultiplicity(int pointIndex);
+    void resizeMultiplicities(/*int i*/);
+    void setMultiplicity(int i);
+    inline int getPointMultiplicity(int i) const { return multiplicities[i]; }
+    void deleteLastMultiplicity();
+    void deleteFirstMultiplicity(int i);
+
     const double getKnot(int i);
     inline int getKnotsSize() const {  return knots.size(); }
     inline bool isBezier() const { return bezier; }
@@ -39,9 +49,9 @@ public:
     void setControlPoints(std::vector<Vec3d> cp);
     void setDegree(int p);
     std::vector<CurvePoint> BSpline(int u);
-    Vec3d deCasteljau(std::vector<Vec3d> controlPoints, double t, std::vector<float> w);
+    Vec3d deCasteljau(/*std::vector<Vec3d> controlPoints,*/ double t, std::vector<float> w);
     std::vector<double> fullInsertion(int knotInterval, double t);   
-    Vec3d deBoor(std::vector<Vec3d> controlPoints, double t, std::vector<float> w);
+    Vec3d deBoor(/*std::vector<Vec3d> controlPoints,*/ double t, std::vector<float> w);
     Vec3d deBoorModify(std::vector<Vec3d> controlPoints, int knotInterval, double t);
 
     void curvePointsInSupport(std::vector<Vec3d> curvePointsVec);

@@ -77,6 +77,9 @@ public:
 
     void RemoveFirstPoint(); 
 	void RemoveLastPoint();
+	void RemoveLastCurvePoint();
+
+	void checkLastCurvePt();
 
 	void renderScene();
 	void renderCurve();	

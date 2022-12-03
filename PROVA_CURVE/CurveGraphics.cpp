@@ -41,7 +41,7 @@ void CurveGraphics::initCurveGL() {
     glGenBuffers(1, &_curveVBO);
     glBindVertexArray(_curveVAO);
     glBindBuffer(GL_ARRAY_BUFFER, _curveVBO);
- GLsizeiptr verticesSize = (steps*10) * sizeof(controlPolygon[0]);
+ GLsizeiptr verticesSize = (steps*15) * sizeof(controlPolygon[0]);
     
     glBufferData(GL_ARRAY_BUFFER, verticesSize, (void*)0, GL_STATIC_DRAW); 
     glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, _stride * sizeof(GLdouble), (void*)0);
@@ -90,15 +90,31 @@ void CurveGraphics::LoadPointsIntoCurveVBO() {
 
 void CurveGraphics::AddPoint(double x, double y)
 {
-    if (_pointsNumber < MaxNumPoints) {
-       
-        controlPolygon[_pointsNumber *_stride] = x;
-        controlPolygon[_pointsNumber * _stride +1] = y;
-        controlPolygon[_pointsNumber * _stride +2] = 0;       
-    } 
+    /*if (_pointsNumber < MaxNumPoints) {*/
+
+        int preview;
+        bool repeated = false;
+        _pointsNumber > 0 ? preview = _pointsNumber - 1 : preview = 0;
+        //
+        if (preview !=0) { //int mul = curveMath.getMultiplicityVector().at(preview);   
+            if (controlPolygon[preview * _stride] == x && controlPolygon[preview * _stride + 1] == y) { 
+                std::cout << "il punto è ripetuto \n";
+                curveMath.editMultiplicity(_pointsNumber - 1);
+                repeated = true;
+            }
+        }
+         if (_pointsNumber < MaxNumPoints && repeated ==false) {
+           
+
+            controlPolygon[_pointsNumber * _stride] = x;
+            controlPolygon[_pointsNumber * _stride + 1] = y;
+            controlPolygon[_pointsNumber * _stride + 2] = 0;
+            _pointsNumber++; curveMath.editMultiplicity(_pointsNumber);
+            LoadPointsIntoVBO(); 
+        }
+    //} 
   
-        _pointsNumber++;
-        LoadPointsIntoVBO(); 
+        
 
         curveMath.setControlPoints(controlPointsVector());
       /*if (_pointsNumber > curveMath.getDegree()) curveMath.generateKnots(_pointsNumber);*/   
@@ -109,15 +125,15 @@ void CurveGraphics::AddPoint(double x, double y)
 void CurveGraphics::rendering(int &deg, bool makeBezier,  bool makeNURBS, std::vector<float>& w) {
     _lineColor = Vec3f(0.0f, 0.5f, 0.7f);
     //addWeights(w);
-    if (makeBezier == true && _pointsNumber>1) 
-    { 
-        curveMath.setDegree(_pointsNumber - 1); deg = curveMath.getDegree();
+    if (makeBezier == true  && _pointsNumber>1/*|| _pointsNumber==curveMath.getDegree()+1*/) 
+    { curveMath.setDegree(_pointsNumber - 1); deg = curveMath.getDegree();
+        
     }
     else if (_pointsNumber >= deg + 1) curveMath.setDegree(deg);
     //else if (_pointsNumber <= 2 && _pointsNumber>0 && deg <=1) {}
     else deg = curveMath.getDegree();
 //curveMath.setControlPoints(controlPointsVector());
-    if (curveMath.degenere(_pointsNumber) == false) {
+    //
        
         //if (makeNURBS == true) {
         //    
@@ -126,11 +142,15 @@ void CurveGraphics::rendering(int &deg, bool makeBezier,  bool makeNURBS, std::v
         //else curveMath.removeWeights(w, controlPointsVector());
      //_lineColor =Vec3f(1.0f, 0.0f, 1.0f);
             //std::cout << "INIZIO A GENERARE LA CURVA \n";
-            // generateFullCurve();   
+            // generateFullCurve(); 
+    curveMath.resizeMultiplicities();
            modifyCurve(w);
-        }
- renderScene();
- renderCurve();
+        //
+           if (curveMath.degenere(_pointsNumber) == false) {
+               renderScene();
+               if (deg==curveMath.getDegree() /*&& deg < _pointsNumber*/) renderCurve();
+           }
+           else renderScene();
 }
 void CurveGraphics::AddCurvePoint(double x, double y) {
         curvePoints[_curvePointsNumber * _stride] = x;
@@ -143,9 +163,22 @@ void CurveGraphics::AddCurvePoint(double x, double y) {
 
 void CurveGraphics::ChangePoint(int i, double x, double y)
 {
-    if (i >= 0 && i < _pointsNumber) {      
+    if (i >= 0 && i < _pointsNumber) { 
         controlPolygon[i * _stride] = x;
-        controlPolygon[i * _stride + 1] = y;
+        controlPolygon[i * _stride + 1] = y;  
+
+        //while (controlPolygon[(i-1)/*- curveMath.getDegree() */ * _stride] == x && controlPolygon[(i-1) /*- curveMath.getDegree() */ * _stride + 1] == y) {
+        //    std::cout << "sposto i punti ripetuti\n";
+        //    controlPolygon[i * _stride] = x;
+        //    controlPolygon[i * _stride + 1] = y;i--;
+        //}
+        //if (controlPolygon[i - curveMath.getDegree() * _stride] == x && controlPolygon[i - curveMath.getDegree() * _stride + 1] == y) {
+        //    for (int j = i; j > i - curveMath.getDegree()/*-1*/; j--) {
+        //        controlPolygon[j * _stride] = x;
+        //        controlPolygon[j * _stride + 1] = y;
+        //    }
+        //}
+        
     }
     LoadPointsIntoVBO();
 
@@ -153,29 +186,35 @@ void CurveGraphics::ChangePoint(int i, double x, double y)
 
 }
 void CurveGraphics::modifyCurve(std::vector<float>& w/*int i, double x, double y*/) {
-    double uinc = 0.01;
+    //curveMath.resizeMultiplicities();
+    double uinc = 0.004;
     std::vector<Vec3d> controlPoints = controlPointsVector(); 
+    curveMath.setControlPoints(controlPointsVector());
     int c = 0;
     Vec3d point = Vec3d(0);
     curveMath.generateKnots(_pointsNumber);
 
     if (curveMath.degenere(_pointsNumber) == false) 
     {
-        for (double u = curveMath.getKnot(curveMath.getDegree() - 1) + uinc; u <= curveMath.getKnot(_pointsNumber); u += uinc) {
-            if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2) 
+        for (double u = curveMath.getKnot(curveMath.getDegree() - 1) /*+ uinc*/; u </*=*/ /*1*/curveMath.getKnot(_pointsNumber + curveMath.getDegree())+uinc; u += uinc) {
+            if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2 && u < 1)
             {
                 curveMath.setBezier(true);
-                point = curveMath.deCasteljau(controlPoints, u,w);                
+                point = curveMath.deCasteljau(/*controlPoints,*/ u, w);
             }
-            else 
+            else if (u < 1)
             {
-                point = curveMath.deBoor(controlPoints, double(u),w);
+                point = curveMath.deBoor(/*controlPoints,*/ double(u), w);
                 curveMath.setBezier(false);
             }
+            else if (u >= 1) point = controlPoints.back()*w[_pointsNumber];
             if (_curvePointsNumber > 0 && c < _curvePointsNumber) { ChangeCurvePoint(c, point.x, point.y); }
-            else if (_curvePointsNumber >= 0 && c >= _curvePointsNumber) { AddCurvePoint(point.x, point.y); }
-            c++;          
-        }
+            else if (_curvePointsNumber >= 0 && c >= _curvePointsNumber /*+1*/) { AddCurvePoint(point.x, point.y); }
+            c++; 
+            //if (_curvePointsNumber >= 0 && c/*+1*/ >= _curvePointsNumber-1) {AddCurvePoint(controlPolygon[(_pointsNumber) * _stride-1], controlPolygon[(_pointsNumber) * _stride+1-1]);  }         
+        }// checkLastCurvePt(); AddCurvePoint(controlPolygon[(_pointsNumber)*_stride /*- 1*/], controlPolygon[(_pointsNumber)*_stride + 1 /*- 1*/]);
+        //if (_curvePointsNumber > 0 && c+1 < _curvePointsNumber-1) { ChangeCurvePoint(c+1, controlPolygon[(_pointsNumber-1) * _stride], controlPolygon[(_pointsNumber-1 )* _stride + 1]); }
+         
     }   
 }
 
@@ -209,18 +248,36 @@ void CurveGraphics::RemoveFirstPoint()
     if (_pointsNumber == 0) {
         return;
     }
+    
     for (int i = 0; i < _pointsNumber - 1; i++) {
         controlPolygon[i * _stride] = controlPolygon[(i + 1) * _stride ];
         controlPolygon[i * _stride + 1] = controlPolygon[(i + 1) * _stride + 1];
         controlPolygon[i * _stride + 2] = controlPolygon[(i + 1) * _stride + 2];
+        curveMath.deleteFirstMultiplicity(i);
     }
     _pointsNumber--;
     if (_pointsNumber > 0) {
-        LoadPointsIntoVBO();
+        LoadPointsIntoVBO(); /*curveMath.deleteLastMultiplicity();*/ curveMath.setControlPoints(controlPointsVector());
     }
 }
 
-void CurveGraphics::RemoveLastPoint() {  _pointsNumber = (_pointsNumber > 0) ? _pointsNumber - 1 : 0; }
+void CurveGraphics::RemoveLastPoint() {
+    if (_pointsNumber == 0) {
+        return;
+    }
+    if (_pointsNumber > 0) { _pointsNumber--; curveMath.deleteLastMultiplicity(); curveMath.setControlPoints(controlPointsVector());
+    }
+}
+
+void CurveGraphics::RemoveLastCurvePoint() { _curvePointsNumber = (_curvePointsNumber > 0) ? _curvePointsNumber - 1 : 0; }
+
+void CurveGraphics::checkLastCurvePt() {
+    for (int i = 2; i < _pointsNumber; i++) {
+        if (curvePoints[_curvePointsNumber * _stride] == controlPolygon[i * _stride] && curvePoints[_curvePointsNumber * _stride + 1] == controlPolygon[i * _stride + 1]) {
+            RemoveLastCurvePoint();
+        }    
+    }
+}
 
 void CurveGraphics::renderScene() {
     glBindVertexArray(_VAO);
@@ -250,9 +307,10 @@ void CurveGraphics::renderCurve() {
         glDrawArrays(GL_LINE_STRIP, 0, _curvePointsNumber);  
        // glBindVertexArray(0);   
         glEnd();//linee
-       /* glVertexAttrib3f(_colorLocation, _pointsColor.x, _pointsColor.y, _pointsColor.z);
+       /* */
+    }/*glVertexAttrib3f(_colorLocation, _pointsColor.x, _pointsColor.y, _pointsColor.z);
         glDrawArrays(GL_POINTS, 0, _curvePointsNumber);*/
-    }
+    
     glBindVertexArray(0);
 
 }
@@ -262,12 +320,16 @@ std::vector<Vec3d> CurveGraphics::controlPointsVector() {
     std::vector<Vec3d> controlPt;
     //std::cout << "STAMPO I PUNTI DI CONTROLLO ->" << std::endl;
     for (int i = 0; i < _pointsNumber*3; i = i + 3) {
+        //std::cout << "molteplicità del pt " << i/3 << " = " << curveMath.getPointMultiplicity(i / 3);
+        //if (curveMath.getPointMultiplicity(i / 3) > curveMath.getDegree()) curveMath.resizeMultiplicities(i / 3);
+        for (int j = 0; j < curveMath.getPointMultiplicity(i/3); j++) {
         
         controlPt.push_back(pt);
         
-        controlPt[i/3].x = controlPolygon[i];
-        controlPt[i/3].y = controlPolygon[i + 1];
-        controlPt[i/3].z = controlPolygon[i + 2];
+        controlPt.back()/*[i/3]*/.x = controlPolygon[i];
+        controlPt.back()/*[i/3]*/.y = controlPolygon[i + 1];
+        controlPt.back()/*[i/3]*/.z = controlPolygon[i + 2];
+        }
     }
     return controlPt;
 }

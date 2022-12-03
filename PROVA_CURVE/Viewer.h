@@ -6,6 +6,7 @@
 #include "Scene.h"
 CurveGraphics* graphics = new CurveGraphics();
 ImguiController _imgui;
+std::vector<int> selectedPoints;
 float currentFrame = static_cast<float>(glfwGetTime());
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f;

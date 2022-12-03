@@ -110,6 +110,7 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
 	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); 
 	auto& io = ImGui::GetIO();
+	//std::vector<int> selectedPoints;
 
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard) { return; }
 	else {
@@ -131,13 +132,14 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 						minDist = thisDist;
 						minI = i;
 					}
+					if (minDist <= 10.0) { selectedPoints.push_back(minI); }
 				}
-				if (minDist <= 10.0) {     				
-					graphics->setSelectedVert(minI);
-					graphics->ChangePoint(minI, /*xpos, ypos*/clipX, clipY);
+				/*if (minDist <= 10.0)*/ for (int j = 0; j < selectedPoints.size();j++) {
+					graphics->setSelectedVert(selectedPoints[j]/*minI*/);
+					graphics->ChangePoint(selectedPoints[j]/*minI*/, /*xpos, ypos*/clipX, clipY);
 				}			
 			}
-				else if (action == GLFW_RELEASE) { graphics->setSelectedVert(-1); }
+			else if (action == GLFW_RELEASE) { graphics->setSelectedVert(-1); selectedPoints.clear(); }
 		}
 	}	
 }
@@ -148,7 +150,8 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	double dotY = 1.0f - (2.0f * (double)y / (double)(windowSize->height - 1));
 	if (graphics->getSelectedVert() == -1) { return; }
 	//scene->updatePoints( dotX, dotY);
-	graphics->ChangePoint(graphics->getSelectedVert(), dotX, dotY);
+	else for (int j = 0; j < selectedPoints.size(); j++) {graphics->setSelectedVert(selectedPoints[j]);graphics->ChangePoint(selectedPoints[j]/*graphics->getSelectedVert()*/, dotX, dotY);}
+	
 }
 
 void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
