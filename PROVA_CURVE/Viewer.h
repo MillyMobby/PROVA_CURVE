@@ -1,15 +1,15 @@
 #pragma once
 //#include "Shader.h"
 //#include "CurveGraphics.h"
-#include "ImguiController.h"
+//#include "ImguiController.h"
 #include <math.h>
 #include "Scene.h"
-CurveGraphics* graphics = new CurveGraphics();
-ImguiController _imgui;
-std::vector<int> selectedPoints;
-float currentFrame = static_cast<float>(glfwGetTime());
-    float deltaTime = 0.0f;	// Time between current frame and last frame
-    float lastFrame = 0.0f;
+//CurveGraphics* graphics = new CurveGraphics();
+//ImguiController _imgui;
+//std::vector<int> selectedPoints;
+//float currentFrame = static_cast<float>(glfwGetTime());
+//    float deltaTime = 0.0f;	// Time between current frame and last frame
+//    float lastFrame = 0.0f;
  //Scene* scene ;
 
 struct WindowSize {
@@ -23,13 +23,15 @@ public:
 
 }; 
 class Viewer
-{   
+{
+    
     //WINDOW
     GLFWwindow* _window = nullptr;   
     WindowSize _windowSize;
-    Shader shader;
-    
-    //Scene scene;
+    //Shader shader;
+    //static ImguiController _imgui ;
+    //static CurveGraphics graphics /*= new = CurveGraphics()*/;
+    //static Scene scene;
    
 public:
 

@@ -60,16 +60,16 @@ public:
 	void setFar(const float& cameraFar);
 	const float& getFar() const;
 	void computeAspectRatio(int width, int height);
-	void ProcessKeyboard(std::string direction, float deltaTime, std::string scene); //MODIFICATA
+	void ProcessKeyboard(std::string direction, float deltaTime, std::string scene); 
 	const float& getAspectRatio() const;
 	const Mat4f& getViewMatrix() const;
 	Mat4f getCubeMapViewMatrix() const;
 	const Mat4f& getProjectionMatrix() const;
 	void updateViewMatrix();
-	void updateProjectionMatrix();
+	void updateProjectionMatrix(int w, int h);
 	void update();
 
-	bool canMove(std::string currentDir, std::string scene);  //NEW STANZA
+	bool canMove(std::string currentDir, std::string scene);  
 
 
 };

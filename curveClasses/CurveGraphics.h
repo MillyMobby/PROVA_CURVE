@@ -45,7 +45,7 @@ public:
 	//};
 	CurveGraphics() {
 		controlPolygon = new double[MaxNumPoints * 3]; 
-		
+		//curvePoints = new double[steps * 3];
 		curveMath.setDegree(2); // grado di default
 	};
 	~CurveGraphics();

@@ -28,8 +28,8 @@ Vec3f Vec3f::operator+=(float other) {//???????????????????????
 //Vec3f Vec3f::operator-(const float& other) const { return Vec3f(x - other, y - other, z - other); }
 Vec3f operator-(const float& scalare, const Vec3f& other) { return Vec3f(scalare - other.x, scalare - other.y, scalare - other.z); }
 
-Vec3f Vec3f::operator*(const float& other) const { return Vec3f(x * other, y * other, z * other); }
-Vec3f Vec3f::operator*(const Vec3f& other) const { return Vec3f(x * other.x, y * other.y, z * other.z); }
+//Vec3f Vec3f::operator*(const float& other) const { return Vec3f(x * other, y * other, z * other); }
+//Vec3f Vec3f::operator*(const Vec3f& other) const { return Vec3f(x * other.x, y * other.y, z * other.z); }
 
 std::ostream& operator<<(std::ostream& output, const Vec3f& a) {
 	output << endl

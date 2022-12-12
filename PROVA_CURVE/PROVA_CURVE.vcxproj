@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Configuration.h" />
     <ClInclude Include="CurveGraphics.h" />
     <ClInclude Include="CurveMath.h" />
     <ClInclude Include="ImguiController.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="imgui\imgui_internal.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Mat3f.h" />
     <ClInclude Include="Mat4f.h" />
     <ClInclude Include="NurbsMath.h" />
@@ -169,6 +171,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\librerie\glad\src\glad.c" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="CurveGraphics.cpp" />
     <ClCompile Include="CurveMath.cpp" />
     <ClCompile Include="ImguiController.cpp" />
@@ -179,6 +182,7 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Mat3f.cpp" />
     <ClCompile Include="Mat4f.cpp" />
     <ClCompile Include="NurbsMath.cpp" />

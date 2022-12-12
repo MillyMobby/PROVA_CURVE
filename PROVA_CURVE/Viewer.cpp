@@ -1,47 +1,31 @@
 #include "Viewer.h"
-void main() {
-	Viewer view;
-	/*CurveGraphics* graphics = new CurveGraphics();
-	Shader* shader = new Shader();
-	shader->setName("color");
-	shader->processShader();
-	scene = new Scene(graphics, shader);
-	scene->initScene();*/
-	//view.setScene(scene);
-	view.start();
-	
-}
-
+static Scene scene;
 void Viewer::start() {
 		init();
-		shader.processShader();
-		graphics->setupGL();
-		graphics->initGL();
-		//scene.initScene();
+		//shader.processShader();		
+		scene.initScene();
 
 		while (!glfwWindowShouldClose(_window)) {			
-			//processMouseInput();		
-			glClearColor(_imgui.clear_color.x * _imgui.clear_color.w, _imgui.clear_color.y * _imgui.clear_color.w, _imgui.clear_color.z * _imgui.clear_color.w, _imgui.clear_color.w);
+			//processMouseInput();	
+			scene.BG();			
 			glClear(GL_COLOR_BUFFER_BIT);
 			const float clearDepth = 1.0f;
 			glClearBufferfv(GL_DEPTH, 0, &clearDepth);	
 
-			//scene->run();
-			glUseProgram(shader.getShaderProgram());	
-			graphics->rendering(_imgui.grado, _imgui.makeBezier,_imgui.makeNURBS,_imgui.weights);					
-
-			windowShouldCloseIMGUI();
+			scene.run();
 			
+			////scene.updateCameraUniform(_camera);
+			
+			scene.windowShouldCloseIMGUI(_window);			
 			glfwPollEvents();
 			glfwSwapBuffers(_window);			
-		}
-		_imgui.cleanupIMGUI();
-		graphics->cleanGL(shader.getShaderProgram());
-		//scene->clean();
+		}		
+		scene.clean();
 		Clean();		
 }
 
 bool Viewer::init() {
+	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -71,11 +55,10 @@ bool Viewer::init() {
 				//glfwSetFramebufferSizeCallback(_window, Viewer::frameBufferSizeCB);
 	glfwSetWindowUserPointer(_window, (void*)&_windowSize);
 	setupCallbacks();	
-	_imgui.setIMGUI(_window);
+	scene.setIMGUI(_window);
 	return 1;
 }
-//void Viewer::setScene(Scene& currentScene) { scene = currentScene; }
-void Viewer::processInput() {}
+//void Viewer::setScene(Scene& currentScene) { scene = currentScene; }void Viewer::processInput() {}
 
 bool Viewer::Clean() {	
 	glfwTerminate();
@@ -106,52 +89,21 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	WindowSize* windowSize = (WindowSize*)glfwGetWindowUserPointer(window);
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
-	// clip space [-1,1]. 
-	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;
+	
+	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;// clip space [-1,1]. 
 	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); 
-	auto& io = ImGui::GetIO();
-	//std::vector<int> selectedPoints;
-
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard) { return; }
-	else {
-	//scene->handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
-		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-			std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
-			graphics->AddPoint(/*xpos, ypos*/clipX, clipY);	
-			_imgui.maxDegree = graphics->getPointsNumber() - 1;
-		}
-		else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-			if (action == GLFW_PRESS) {
-				double minDist = 10000.0;
-				int minI;
-				for (int i = 0; i < graphics->getPointsNumber(); i++) {
-					double thisDistX =  (/*xpos*/clipX - graphics->getControlPt_X(i)) * 0.5f *(double)windowSize->width;
-					double thisDistY =  (/*ypos*/clipY - graphics->getControlPt_Y(i)) * 0.5f *(double)windowSize->height;
-					double thisDist = sqrtf(thisDistX * thisDistX + thisDistY * thisDistY);
-					if (thisDist < minDist) {
-						minDist = thisDist;
-						minI = i;
-					}
-					if (minDist <= 10.0) { selectedPoints.push_back(minI); }
-				}
-				/*if (minDist <= 10.0)*/ for (int j = 0; j < selectedPoints.size();j++) {
-					graphics->setSelectedVert(selectedPoints[j]/*minI*/);
-					graphics->ChangePoint(selectedPoints[j]/*minI*/, /*xpos, ypos*/clipX, clipY);
-				}			
-			}
-			else if (action == GLFW_RELEASE) { graphics->setSelectedVert(-1); selectedPoints.clear(); }
-		}
-	}	
+	//auto& io = ImGui::GetIO();
+	//if (io.WantCaptureMouse || io.WantCaptureKeyboard) { return; }
+	//else 
+	scene.handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
 }
 
 void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	WindowSize* windowSize = (WindowSize*)glfwGetWindowUserPointer(window);
 	double dotX = (2.0f * (double)x / (double)(windowSize->width - 1)) - 1.0f;
 	double dotY = 1.0f - (2.0f * (double)y / (double)(windowSize->height - 1));
-	if (graphics->getSelectedVert() == -1) { return; }
-	//scene->updatePoints( dotX, dotY);
-	else for (int j = 0; j < selectedPoints.size(); j++) {graphics->setSelectedVert(selectedPoints[j]);graphics->ChangePoint(selectedPoints[j]/*graphics->getSelectedVert()*/, dotX, dotY);}
-	
+
+	scene.updatePoints( dotX, dotY);	
 }
 
 void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -161,25 +113,14 @@ void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_X) {
 		glfwSetWindowShouldClose(window, true);
 	}
-	else if (key == GLFW_KEY_F) {
-		//scene->handleKeyEvents( key);
-		if (graphics->getSelectedVert() != 0) 
-		{
-			graphics->RemoveFirstPoint();
-			_imgui.maxDegree = graphics->getPointsNumber() - 1;
-			if (graphics->getSelectedVert() < 0) {
-				//graphics->setSelectedVert(graphics->getSelectedVert());
-			}		
-			else graphics->setSelectedVert(-1);
-		}
-	}
-	else if (key == GLFW_KEY_L) {
-			graphics->RemoveLastPoint();
-			_imgui.maxDegree = graphics->getPointsNumber() - 1;
-	}
+	else scene.handleKeyEvents( key);	
 }
 
+
+
+
+
 void Viewer::windowShouldCloseIMGUI() {
-	_imgui.windowIMGUI(_window);
-	_imgui.renderIMGUI();
+	/*_imgui.windowIMGUI(_window);
+	_imgui.renderIMGUI();*/
 }

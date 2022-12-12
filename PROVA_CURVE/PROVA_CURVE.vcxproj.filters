@@ -84,6 +84,12 @@
     <ClInclude Include="imgui\imstb_textedit.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CurveGraphics.cpp">
@@ -147,6 +153,12 @@
       <Filter>File di origine\imgui_impl</Filter>
     </ClCompile>
     <ClCompile Include="NurbsMath.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
