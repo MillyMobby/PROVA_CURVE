@@ -1,5 +1,7 @@
 #pragma once
 #include "Vec3f.h"
+#include "Vec4d.h"
+#include "Mat4d.h"
 #include "Shader.h"
 #include "CurveMath.h"
 
@@ -24,7 +26,8 @@ private:
 	CurveMath curveMath;
 
 	//VERTICES SETTINGS
-	unsigned int _stride = 3;
+	unsigned int _stride = 4;
+	unsigned int _curveStride = 3;
 	const unsigned int _posLocation = 0;   // "location = 0"  vertex shader 
 	const unsigned int _colorLocation = 1;
 	
@@ -33,6 +36,7 @@ private:
 	Vec3f _curveColor = Vec3f(1.0f, 0.7f, 1.0f);
 	
 	bool isChanged = false;
+	Mat4d _transform;
 public:	
 	//inline CurveGraphics& operator=(const CurveGraphics& m) {
 	//	for (int i = 0; i < MaxNumPoints; i++)
@@ -44,9 +48,9 @@ public:
 	//	}return *this;
 	//};
 	CurveGraphics() {
-		controlPolygon = new double[MaxNumPoints * 3]; 
-		
-		curveMath.setDegree(2); // grado di default
+		controlPolygon = new double[MaxNumPoints * 4]; 
+		curveMath.generateKnots();
+		curveMath.setDegree(3); // grado di default
 	};
 	~CurveGraphics();
 
@@ -74,8 +78,10 @@ public:
 	void LoadPointsIntoCurveVBO();
     void AddPoint(double x, double y);
 	void AddCurvePoint(double x, double y);	
-    void ChangePoint(int i, double x, double y);
+    void ChangePoint(int i, double x, double y, double z);
+	void ChangePoint(int i, double x, double y);
 	void modifyCurve(std::vector<float>& w/*int i, double x, double y*/);
+	void modifyControlPolygon(std::vector<float>& w);
 	void ChangeCurvePoint(int i, double x, double y);
 
 	const int getSelectedVert();
@@ -92,11 +98,7 @@ public:
 	void RemoveLastCurvePoint();
 
 	void checkLastCurvePt(); //not used
-
-	
-
-	
-	
-
+	void example(double* v);
+	void transformWithCamera(Camera& camera);
 };
 

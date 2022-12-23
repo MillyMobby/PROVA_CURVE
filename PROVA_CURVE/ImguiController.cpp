@@ -56,7 +56,7 @@ void ImguiController::NurbsWeightEditor() {
 				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
 				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
 				ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
-				ImGui::VSliderFloat("##v", ImVec2(18, 160), &weights[i], 0.0f, 1.0f, "w");
+				ImGui::VSliderFloat("##v", ImVec2(18, 160), &weights[i], 0.01f, 1.0f, "w");
 				if (ImGui::IsItemActive() || ImGui::IsItemHovered())
 					ImGui::SetTooltip("%.3f", weights[i]);
 				ImGui::PopStyleColor(4);
@@ -77,7 +77,7 @@ void ImguiController::windowIMGUI(GLFWwindow* _window) {
 
 	
 	if (show_window)
-		//ImGui::ShowDemoWindow(&show_demo_window);
+		ImGui::ShowDemoWindow(&show_demo_window);
 		//Begin/End pair to createa named window.
 	{
 		displayInputGuide();

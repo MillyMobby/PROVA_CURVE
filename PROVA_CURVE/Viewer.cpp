@@ -1,20 +1,24 @@
 #include "Viewer.h"
 static Scene scene;
 void Viewer::start() {
-		init();
-		//shader.processShader();		
+		init();	
 		scene.initScene();
+		scene.loadCamera(_windowSize.width, _windowSize.height);
 
-		while (!glfwWindowShouldClose(_window)) {			
-			//processMouseInput();	
+		while (!glfwWindowShouldClose(_window)) {	
+			float currentFrame = static_cast<float>(glfwGetTime());
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
+			processInput();
+			scene.checkForTransformations(isMoving);
+			isMoving = false;
+			
 			scene.BG();			
 			glClear(GL_COLOR_BUFFER_BIT);
 			const float clearDepth = 1.0f;
 			glClearBufferfv(GL_DEPTH, 0, &clearDepth);	
 
-			scene.run();
-			
-			////scene.updateCameraUniform(_camera);
+			scene.run(deltaTime);			
 			
 			scene.windowShouldCloseIMGUI(_window);			
 			glfwPollEvents();
@@ -46,19 +50,39 @@ bool Viewer::init() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return false;
 	}
-				//glViewport(0,0, _windowSize.width, _windowSize.height); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
-				//glMatrixMode(GL_PROJECTION); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
-				//glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-				//glOrtho(0, 1, 0, 1, 0, 1); // essentially set coordinate system
-				//glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
-				//glLoadIdentity(); // same as above comment
-				//glfwSetFramebufferSizeCallback(_window, Viewer::frameBufferSizeCB);
+
 	glfwSetWindowUserPointer(_window, (void*)&_windowSize);
 	setupCallbacks();	
 	scene.setIMGUI(_window);
 	return 1;
 }
-//void Viewer::setScene(Scene& currentScene) { scene = currentScene; }void Viewer::processInput() {}
+//void Viewer::setScene(Scene& currentScene) { scene = currentScene; }
+
+bool Viewer::processInput() {	
+		
+	isMoving = false;
+		if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+			glfwSetWindowShouldClose(_window, true);
+		}
+		
+		if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) { scene.getCamera().ProcessKeyboard(0, deltaTime); isMoving = true; } //FORWARD,
+		if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) { scene.getCamera().ProcessKeyboard(1, deltaTime); isMoving = true;} //BACKWARD,
+		if (glfwGetKey(_window, GLFW_KEY_Q) == GLFW_PRESS) { scene.getCamera().ProcessKeyboard(2, deltaTime); isMoving = true; //LEFT,
+		}
+		if (glfwGetKey(_window, GLFW_KEY_E) == GLFW_PRESS) { scene.getCamera().ProcessKeyboard(3, deltaTime); isMoving = true; //RIGHT,
+		}
+		if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) { scene.getCamera().ProcessKeyboard(5, deltaTime); isMoving = true; //ROTATION_SX
+		}
+		if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) { scene.getCamera().ProcessKeyboard(4, deltaTime); isMoving = true; //ROTATION_DX,
+		}
+		
+		//Mat4d m = scene.getCamera().getTransform();
+		//scene.getCamera().updateViewMatrix(m);
+		//scene.getCamera().getEyeFromMatrix();
+		
+		//scene.updateCamera(_windowSize.width, _windowSize.height);
+		return isMoving;
+}
 
 bool Viewer::Clean() {	
 	glfwTerminate();
@@ -90,11 +114,9 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	
-	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;// clip space [-1,1]. 
+	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;  // clip space [-1,1]. 
 	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); 
-	//auto& io = ImGui::GetIO();
-	//if (io.WantCaptureMouse || io.WantCaptureKeyboard) { return; }
-	//else 
+	
 	scene.handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
 }
 
@@ -117,10 +139,3 @@ void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 
-
-
-
-void Viewer::windowShouldCloseIMGUI() {
-	/*_imgui.windowIMGUI(_window);
-	_imgui.renderIMGUI();*/
-}

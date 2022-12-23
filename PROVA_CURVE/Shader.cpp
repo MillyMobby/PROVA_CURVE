@@ -162,3 +162,49 @@ void Shader::processShader() {
 
 }
 
+void Shader::setVec4(const std::string& name, const float& x, const float& y, const float& z, const float& w) {
+    glUniform4f(glGetUniformLocation(_shaderProgram, name.c_str()), x, y, z, w);
+}
+
+void Shader::setVec3(const std::string name, const float& x, const float& y, const float& z) { // NEW LUCI 
+    glUniform3f(glGetUniformLocation(_shaderProgram, name.c_str()), x, y, z);
+}
+
+
+void Shader::setI1(const std::string name, const bool& b) { // NEW LUCI NON USATA PERCHé USO QUELLA PER INT
+    glUniform1i(glGetUniformLocation(_shaderProgram, name.c_str()), b);
+}
+
+void Shader::setF(const std::string name, const float& f) { // NEWW
+    glUniform1f(glGetUniformLocation(_shaderProgram, name.c_str()), f);
+}
+
+
+
+void Shader::setVec4i(const std::string& name, const int& x, const int& y, const int& z, const int& w) {
+    glUseProgram(_shaderProgram); // NEW
+    glUniform4i(glGetUniformLocation(_shaderProgram, name.c_str()), x, y, z, w);
+}
+
+
+void Shader::setT1(const std::string name, const int& n) {
+
+    glUniform1i(glGetUniformLocation(_shaderProgram, name.c_str()), n);
+}
+
+void Shader::setMat4(const std::string& name, const Mat4d& value) {
+
+    glUniformMatrix4fv(glGetUniformLocation(_shaderProgram, name.c_str()), 1, GL_FALSE, value.m.data());
+
+}
+
+void Shader::updateCameraUniform(const Camera& cam) {
+
+    setMat4("viewMatrix", cam.getViewMatrix());
+    setMat4("orthoMatrix", cam.getProjectionMatrix());
+    setMat4("transform", cam.getTransform());
+}
+
+
+
+

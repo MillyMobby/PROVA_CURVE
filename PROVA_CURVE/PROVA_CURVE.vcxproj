@@ -158,13 +158,16 @@
     <ClInclude Include="imgui\imgui_internal.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Mat3d.h" />
     <ClInclude Include="Mat3f.h" />
+    <ClInclude Include="Mat4d.h" />
     <ClInclude Include="Mat4f.h" />
     <ClInclude Include="NurbsMath.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Vec3d.h" />
     <ClInclude Include="Vec3f.h" />
+    <ClInclude Include="Vec4d.h" />
     <ClInclude Include="Vec4f.h" />
     <ClInclude Include="Viewer.h" />
   </ItemGroup>
@@ -183,13 +186,16 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mat3d.cpp" />
     <ClCompile Include="Mat3f.cpp" />
+    <ClCompile Include="Mat4d.cpp" />
     <ClCompile Include="Mat4f.cpp" />
     <ClCompile Include="NurbsMath.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Vec3d.cpp" />
     <ClCompile Include="Vec3f.cpp" />
+    <ClCompile Include="Vec4d.cpp" />
     <ClCompile Include="Vec4f.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>

@@ -12,7 +12,7 @@ class ImguiController
 {
 private:
 	bool show_window = true;
-	/*show_another_window = true*/
+	bool show_demo_window = true;
  
 
 public:
@@ -22,6 +22,8 @@ public:
 	bool makeBezier = false, makeNURBS = false;
 	int maxDegree = 0,  minDegree = 0;
 	 std::vector<float>weights = std::vector<float>(100, 1);
+	
+	
 	
 	~ImguiController() {};
 	void setIMGUI(GLFWwindow* _window);

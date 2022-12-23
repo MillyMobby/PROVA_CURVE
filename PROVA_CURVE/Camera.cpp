@@ -1,25 +1,25 @@
 #include "Camera.h"
-void Camera::setEye(const Vec3f& eye) {
+void Camera::setEye(const Vec3d& eye) {
 	_eye = eye;
 	_isChanged = true;
 }
-const Vec3f& Camera::getEye() const {
+const Vec3d& Camera::getEye() const {
 	return _eye;
 }
 
-void Camera::setLookAt(const Vec3f& lookat) {
+void Camera::setLookAt(const Vec3d& lookat) {
 	_lookAt = lookat;
 	_isChanged = true;
 }
 
-const Vec3f& Camera::getLookAt() const {
+const Vec3d& Camera::getLookAt() const {
 	return _lookAt;
 }
-void Camera::setup(const Vec3f& up) {
+void Camera::setup(const Vec3d& up) {
 	_up = up;
 	_isChanged = true;
 }
-const Vec3f& Camera::getUp() const {
+const Vec3d& Camera::getUp() const {
 	return _up;
 }
 void Camera::setFov(const float& fov) {
@@ -46,6 +46,14 @@ const float& Camera::getFar() const {
 	return _far;
 }
 
+void Camera::setTransform(const Mat4d& transform) {
+    _transform = transform;
+    _isChanged = true;
+}
+const Mat4d& Camera::getTransform() const {
+    return _transform;
+}
+
 const float& Camera::getAspectRatio() const {
 	return _aspectRatio;
 }
@@ -55,112 +63,119 @@ void Camera::computeAspectRatio(int width, int height) {
 	_isChanged = true;
 }
 
-void Camera::ProcessKeyboard(std::string direction, float deltaTime, std::string scene)
+void Camera::ProcessKeyboard(int direction, double deltaTime)
 {
-    float velocity = 5.5f * deltaTime;
-    if (direction == "FORWARD") {
+    double velocity =  deltaTime/8;
+    if (direction == FORWARD) {
         
-            setEye(_eye - (_eye - _lookAt).normalize() * velocity);
-            setLookAt(_lookAt - (_eye - _lookAt).normalize() * velocity);
-            previousDirection = "FORWARD";
-            updateViewMatrix();
+        Mat4d scale = Mat4d::scaleMatrix(1.5+ velocity/4, 1.5 + velocity / 4, 1.5 + velocity / 4);
+        //_eye = scale * _eye;
+        //_lookAt = scale * _lookAt;
+        _zoom = scale;
         
+        _viewMatrix = scale * _viewMatrix;
+        //updateTransformMatrix(scale);
+    }
+    if (direction == BACKWARD) {
+        Mat4d scale = Mat4d::scaleMatrix(1.5/2- velocity / 4, 1.5/2- velocity / 4, 1.5/2- velocity / 4);
+        _zoom = scale;
+        
+       _viewMatrix = scale * _viewMatrix;
+        //_eye = scale * _eye;
+        //_lookAt = scale * _lookAt;
+       // updateTransformMatrix(scale);
+    }
+    if (direction == ROTATION_SX) {
+        //Vec3f v = (_lookAt - _eye);
+        Mat4d rot = Mat4d::rotateZ(velocity* 3.141592653589793238463 );
+        /*v = rot3 * v;
+        _lookAt = v + _eye;*/
+        //_viewMatrix = rot * _viewMatrix;
+        updateTransformMatrix(rot);
 
     }
-    if (direction == "BACKWARD") {
-        
-            setEye(_eye + (_eye - _lookAt).normalize() * velocity);
-            setLookAt(_lookAt + (_eye - _lookAt).normalize() * velocity);
-            previousDirection = "BACKWARD";
-            updateViewMatrix();
+    if (direction == ROTATION_DX) {
 
+        Mat4d rot = Mat4d::rotateZ(velocity * -3.141592653589793238463 );
+        //_viewMatrix = rot * _viewMatrix;
+        
+        updateTransformMatrix(rot);
+
+    }
+    if (direction == LEFT) {
        
-
-
-    }
-    if (direction == "ROTATION_SX") {
-        Vec3f v = (_lookAt - _eye);
-        Mat3f rot3 = Mat3f::rotateY(velocity / 4 * 3.141592653589793238463 / 8);
-        v = rot3 * v;
-        _lookAt = v + _eye;
-
-        updateViewMatrix();
-
-    }
-    if (direction == "ROTATION_DX") {
-
-        Mat3f rot3 = Mat3f::rotateY(velocity / 4 * -3.141592653589793238463 / 8);
-        Vec3f v = (_lookAt - _eye);
-        v = rot3 * v;
-        _lookAt = v + _eye;
-
-
-        updateViewMatrix();
-
-    }
-    if (direction == "LEFT") {
+        Mat4d trans = Mat4d::translation(-velocity, 0, 0);
+        //_viewMatrix = trans * _viewMatrix;
        
-            Vec3f occhio = _eye, vede = _lookAt, asseVerticale = _up;
-            Vec3f sguardo = (occhio - vede).normalize();
-
-            Vec3f dir = (sguardo.cross(asseVerticale)).normalize();
-
-            _eye.x = _eye.x + dir.x * velocity;
-            _lookAt.x = _lookAt.x + dir.x * velocity;
-
-            _eye.z = _eye.z + dir.z * velocity;
-            _lookAt.z = _lookAt.z + dir.z * velocity;
-            previousDirection = "LEFT";
-            updateViewMatrix();
+        updateTransformMatrix(trans);// std::cout << "trans matrix" << _transform;
         
 
     }
-    if (direction == "RIGHT") {
-       
-            Vec3f occhio = _eye, vede = _lookAt, asseVerticale = _up;
-            Vec3f sguardo = (occhio - vede).normalize();
-            Vec3f dir = (sguardo.cross(asseVerticale)).normalize();
-
-            _eye.x = _eye.x - dir.x * velocity;
-            _lookAt.x = _lookAt.x - dir.x * velocity;
-            _eye.z = _eye.z - dir.z * velocity;
-            _lookAt.z = _lookAt.z - dir.z * velocity;
-            previousDirection = "RIGHT";
-            updateViewMatrix();
+    if (direction == RIGHT) {
         
+        Mat4d trans = Mat4d::translation(velocity, 0, 0);
+        //_viewMatrix = trans * _viewMatrix;
+        
+        updateTransformMatrix(trans);
+        //std::cout << "trans matrix" << _transform;
 
     }
+    
+    //Mat4f i = Mat4f::identity();
+    //updateViewMatrix(i);
 }
 
 void Camera::updateProjectionMatrix(int w, int h) {
     float r = _near * tanf(getFov() * 0.5f); // r = n tan (fov/2) e il 2????'
     float t = r / _aspectRatio; // t = aspectRatio * r
     //float h = w / 1.5;
-    // 0.78539 è il fov in radianti calcolato su internet
+    
     // _projectionMatrix = Mat4f::ProjectionMatrix(r, t, 0, _aspectRatio, _near, _far);
-    _projectionMatrix = Mat4f::orthographicProjection(w,h, _near, _far);
+    _projectionMatrix = Mat4d::orthographic(-1, 1, -1, 1, _near, _far);
 
 }
 
-const Mat4f& Camera::getProjectionMatrix() const {
+const Mat4d& Camera::getProjectionMatrix() const {
     return _projectionMatrix;
 }
 
-const Mat4f& Camera::getViewMatrix() const {
+const Mat4d& Camera::getViewMatrix() const {
     return _viewMatrix;
 }
 
-void Camera::updateViewMatrix() {
-   // Mat4f scale = Mat4f::scaleMatrix(5, 5, 5);
-    _viewMatrix = Mat4f::ViewMatrix(_eye, _lookAt, _up);
-    _viewMatrix = /*scale **/ _viewMatrix;
+const Mat4d& Camera::getZoomMatrix() const {
+    return _zoom;
 }
 
-void Camera::update() {
+void Camera::updateViewMatrix(Mat4d& transform) {
+   // Mat4f scale = Mat4f::scaleMatrix(5, 5, 5);
+    _viewMatrix = Mat4d::ViewMatrix(_eye, _lookAt, _up);
+    //_zoom = transform;
+    //updateTransformMatrix(transform);
+    _viewMatrix = _zoom*_viewMatrix;
+}
+
+
+
+void Camera::updateTransformMatrix(Mat4d& transform) {
+    // Mat4f scale = Mat4f::scaleMatrix(5, 5, 5);
+    _transform = transform * _transform;
+}
+
+
+
+void Camera::update(int w, int h) {
+    Mat4d id = Mat4d::identity();
     if (_isChanged) {
-        updateViewMatrix();
-        updateProjectionMatrix();
+        
+        updateViewMatrix(id);
+        updateProjectionMatrix(w,h);
 
         _isChanged = false;
     }
+}
+
+void Camera::getEyeFromMatrix() {
+    Vec4d eye = _viewMatrix.getCol(3);
+    std::cout << "eye " << eye << std::endl;
 }

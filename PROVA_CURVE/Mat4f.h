@@ -76,7 +76,7 @@ public:
 	Mat4f trasposta();
 	void transpose();
 	float det() const;
-	Mat4f identity();
+	static Mat4f identity();
 	//bool invertibile();
 	//Mat4f cofattori();
 	Mat4f inverse();
@@ -87,6 +87,7 @@ public:
 	//static Mat4f ProjectionMatrix(float l, float r, float b, float t, float n, float f);
 	static Mat4f ProjectionMatrix(float r, float t, float fov, float aspectRatio, float zNear, float zFar); // modificata per prova
 	static Mat4f orthographicProjection(float width, float height, float zNear, float zFar);
+	static Mat4f orthographic(float left, float right, float bottom, float top, float zNear, float zFar);
 	static Mat4f ViewMatrix(const Vec3f eye, const Vec3f lookAt, const Vec3f up);
 	static Mat4f scaleMatrix(float sx, float sy, float sz);
 

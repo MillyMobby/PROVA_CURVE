@@ -6,6 +6,7 @@
 #include <vector>
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
+#include "Camera.h"
 class Shader
 {
 private:
@@ -33,6 +34,20 @@ public:
 
 	GLuint& getShaderProgram(); 
 
+	void setMat4(const std::string& name, const Mat4d& value); //NEW CAMERA
+	void setVec4(const std::string& name, const float& x, const float& y, const float& z, const float& w);
+	void setVec3(const std::string name, const float& x, const float& y, const float& z); // NEW LUCI 
+	void setI1(const std::string name, const bool& b); //NEW LUCI 
+	void setT1(const std::string name, const int& b); // NEW ARI
+	void setVec4i(const std::string& name, const int& x, const int& y, const int& z, const int& w); //NEW ARI
+	void setF(const std::string name, const float& f); //NEW ARI
+
+	void setUniform(const std::string& name, std::vector<int> value, const int& count = -1);//NEW ARIIIIIIIII ??????
+	void setUniform(const std::string& name, std::vector<float> value, const int& count);
+	//void updateLightUniform(Light& light, const int& lightIndex, const bool& isEnable);//NEW LUCI
+	
+	//void updateObjectUniform(Object obj);
+
 	bool buildMaterial(const std::string& vShaderPath, const std::string& fShaderPath);
 	bool compile(const std::string& shaderCode, const GLenum& shaderType, GLuint& shader);
 	bool link(const GLuint& vShader, const GLuint& fShader);
@@ -42,6 +57,6 @@ public:
 	bool buildMaterial();
 
 	void draw();
-
+	void updateCameraUniform(const Camera& cam);
 };
 
