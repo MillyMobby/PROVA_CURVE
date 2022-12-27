@@ -15,6 +15,7 @@ private:
     std::vector<int> multiplicities;
     std::vector<double> knots;		
     std::vector<Vec3d> controlPoints; 
+    float* basisValues;
 
     int degree;
     bool bezier = false;
@@ -23,7 +24,7 @@ private:
     int steps = 1 / increment;*/
 
 public:
-    CurveMath() {};
+    CurveMath() { basisValues = new float[100]; };
     ~CurveMath() {};
 
     bool degenere(int pointsNum);
@@ -46,23 +47,28 @@ public:
 
     inline double getDomainLeft() const { return 0; }
     inline double getDomainRight() const { return 1; }
+
+    inline void setBasisValues(float* values) { basisValues = values; }
+    inline float* getBasisValues() const { return basisValues; }
    // inline double getIncrement() const {   return increment;  }
     
     void generateKnots();
     void setControlPoints(std::vector<Vec3d> cp);
     void setDegree(int p);
     std::vector<CurvePoint> BSpline(int u);
-    Vec3d deCasteljau(/*std::vector<Vec3d> controlPoints,*/ double t, std::vector<float> w);
+    Vec3d deCasteljau(double t, std::vector<float> w);
     Vec3d deCas(double t, std::vector<float> w);
     std::vector<double> fullInsertion(int knotInterval, double t);   
-    Vec3d deBoor(/*std::vector<Vec3d> controlPoints,*/ double t, std::vector<float> w);
-    //Vec3d deBoorModify(std::vector<Vec3d> controlPoints, int knotInterval, double t);
-    Vec3d deb(double t, std::vector<float> w);
+    Vec3d deBoor(double t, std::vector<float> w);
+   
+    
 
     void curvePointsInSupport(std::vector<Vec3d> curvePointsVec);
 
     void addWeights(std::vector<float> w, std::vector<Vec3d> controlPol);
     void removeWeights(std::vector<float> w, std::vector<Vec3d> controlPol);
     void print();
+
+    float BSplineBasis(int p, int interval);
 };
 

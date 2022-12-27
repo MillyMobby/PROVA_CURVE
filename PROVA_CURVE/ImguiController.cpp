@@ -90,8 +90,12 @@ void ImguiController::windowIMGUI(GLFWwindow* _window) {
 		ImGui::SameLine();
 		ImGui::Text("(Degree %d)", maxDegree);
 		ImGui::Checkbox("Make NURBS (Add Weights)", &makeNURBS);
-		NurbsWeightEditor();		
+		NurbsWeightEditor();
+
 		
+		
+		//ImGui::PlotHistogram("Histogram", values, IM_ARRAYSIZE(values), 0.01, NULL, -0.0f, 1.0f, ImVec2(0, 80.0f));
+
 		ImGui::End();
 	}
 

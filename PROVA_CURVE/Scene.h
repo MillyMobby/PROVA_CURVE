@@ -34,5 +34,6 @@ public:
 	Camera& getCamera();
 	void updateCamera(int w, int h);
 	void checkForTransformations(bool wasMoved);
+	void BSplineBasisGraphic();
 };
 

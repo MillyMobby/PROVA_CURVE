@@ -54,8 +54,6 @@ public:
 	};
 	~CurveGraphics();
 
-	
-
 	//ARRAYS CONVERTED IN Vec3d FORMAT
 	std::vector<Vec3d> controlPointsVector();
 	std::vector<Vec3d>curvePointsVector();
@@ -100,5 +98,7 @@ public:
 	void checkLastCurvePt(); //not used
 	void example(double* v);
 	void transformWithCamera(Camera& camera);
+
+	float* BSplineBasisGraphic();
 };
 

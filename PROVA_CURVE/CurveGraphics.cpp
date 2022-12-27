@@ -381,3 +381,15 @@ void CurveGraphics::transformWithCamera(Camera& camera)
     }
     
 }
+
+float* CurveGraphics::BSplineBasisGraphic() {
+   float value = -2;
+    if (curveMath.degenere(_pointsNumber) == false) {
+        
+    
+    for (int k = 0; k < curveMath.getKnotsVector().size(); k++) {
+        curveMath.BSplineBasis(curveMath.getDegree(), k);
+    }
+    }
+    return curveMath.getBasisValues();
+}

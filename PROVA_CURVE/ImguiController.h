@@ -21,7 +21,8 @@ public:
 	int grado = 2;
 	bool makeBezier = false, makeNURBS = false;
 	int maxDegree = 0,  minDegree = 0;
-	 std::vector<float>weights = std::vector<float>(100, 1);
+	std::vector<float>weights = std::vector<float>(100, 1);
+	 float* values;
 	
 	
 	

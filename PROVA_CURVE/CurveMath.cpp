@@ -130,6 +130,44 @@ void CurveMath::print() {
 	for (int i = 0; i < knots.size(); i++) { std::cout << " " << knots[i] << ", "; }
 }
 
+float CurveMath::BSplineBasis( int p, int interval) {
+	double coordinate_Y = -1;
+	//if (knots[interval] == 0 || knots[interval == 1]) { coordinate_Y = 1;  return coordinate_Y; }
+	double numerator1, denominator1, numerator2, denominator2, expr1 =0, expr2=0;
+	int k = 0;
+	for (double t = knots[interval]; t < knots[interval + p + 1] + 0.01; t = t + 0.01) {
+	if (p == 0) {
+		if (t >= knots[interval] && t < knots[interval + 1]) coordinate_Y = 1;
+		else coordinate_Y = 0;
+	}
+	//else if (p == 1) {
+	//	if (t >= knots[interval] && t < knots[interval + 1]) coordinate_Y = (t - knots[interval])/(knots[interval + 1] - knots[interval]);
+	//	else if (t >= knots[interval+1] && t <= knots[interval + 2]) coordinate_Y = (knots[interval+2]-t) / (knots[interval + 2] - knots[interval+1]);
+	//}
+	else {
+		numerator1 = t - knots[interval]; 
+		denominator1 = knots[interval + p] - knots[interval];
+		numerator2 = knots[interval + p + 1] - t; 
+		denominator2 = knots[interval + p + 1] - knots[interval + 1];
+
+		if (denominator1 != 0) /*{ expr1 = 0.0; }
+		else */{ expr1 = numerator1 / denominator1; }
+
+		if (denominator2 != 0) /*{ expr2 = 0.0; }
+		else */{ expr2 = numerator2 / denominator2; }
+
+		coordinate_Y = expr1 * BSplineBasis( p - 1, interval) + expr2 * BSplineBasis(p - 1, interval + 1);
+		
+	}
+	basisValues[k] = coordinate_Y;
+	k++;
+	}
+	
+	return coordinate_Y;
+}
+
+
+
 
 
 

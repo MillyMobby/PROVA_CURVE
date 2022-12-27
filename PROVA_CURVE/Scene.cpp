@@ -33,13 +33,14 @@ void Scene::setIMGUI(GLFWwindow* window) {
 	_imgui.setIMGUI(window);
 }
 
-void Scene::BG() { glClearColor(_imgui.clear_color.x * _imgui.clear_color.w, _imgui.clear_color.y * _imgui.clear_color.w, _imgui.clear_color.z * _imgui.clear_color.w, _imgui.clear_color.w); }
+void Scene::BG() {  glClearColor(_imgui.clear_color.x * _imgui.clear_color.w, _imgui.clear_color.y * _imgui.clear_color.w, _imgui.clear_color.z * _imgui.clear_color.w, _imgui.clear_color.w); }
 
 void Scene::run(float deltaTime) {
 	glUseProgram(_shader.getShaderProgram());
 	//glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
 	
 	_graphics->rendering(_imgui.grado, _imgui.makeBezier, _imgui.makeNURBS, _imgui.weights);
+	//BSplineBasisGraphic();
 	_shader.updateCameraUniform(_camera);
 }
 
@@ -141,4 +142,13 @@ void Scene::checkForTransformations(bool wasMoved) {
 		Mat4d id = Mat4d::identity();
 		_camera.setTransform(id);
 	}
+}
+
+void Scene::BSplineBasisGraphic() {
+	int count = 0;
+	
+		_imgui.values = _graphics->BSplineBasisGraphic();
+		count++;
+	
+	
 }
