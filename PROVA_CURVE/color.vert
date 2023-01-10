@@ -14,7 +14,8 @@ void main()
  
 		mat4 PVM = transpose(orthoMatrix) *transpose(viewMatrix);
 		gl_Position = PVM * pos;
-		
+		Color = color;
 		//gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);   
-   Color = color;    
+////	if (pos.w == 1){   }
+//	else if (pos.w ==0) {Color = vec3(1.0, 0.0, 0.0);}
 }

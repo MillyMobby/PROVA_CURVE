@@ -25,7 +25,8 @@ void ImguiController::displayInputGuide() {
 	ImGui::BulletText("[L] = remove last control point");
 	ImGui::Text("Mouse input guide:");
 	ImGui::BulletText("[right] = add control point");
-	ImGui::BulletText("[left] = move selected control point\n");
+	ImGui::BulletText("[left] = move selected control point");
+	ImGui::BulletText("[middle] = drag and drop to move the view \n");
 }
 
 void ImguiController::DegreeRangeWidget() {
@@ -46,6 +47,7 @@ void ImguiController::degreeSlider() {
 void ImguiController::NurbsWeightEditor() {
 	if (makeNURBS == true) {
 		if (maxDegree >= grado) {
+			if (isChanged) { setPredefinedCurve(); isChanged = false; }
 			ImGui::BulletText("NURBS weight slider:\n");
 			for (int i = 0; i < maxDegree + minDegree; i++)
 			{
@@ -56,12 +58,16 @@ void ImguiController::NurbsWeightEditor() {
 				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
 				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
 				ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
-				ImGui::VSliderFloat("##v", ImVec2(18, 160), &weights[i], 0.01f, 1.0f, "w");
+				ImGui::VSliderFloat("##v", ImVec2(18, 160), &weights[i], 0.001f, 1.0f, "w");
 				if (ImGui::IsItemActive() || ImGui::IsItemHovered())
 					ImGui::SetTooltip("%.3f", weights[i]);
 				ImGui::PopStyleColor(4);
 				ImGui::PopID();
 			}
+			
+			ImGui::Combo("mode", &item, "free curve\0circle\0cccc\0dddd\0eeee\0\0");
+			if (item != itemCurrent) { itemCurrent = item; isChanged = true; }
+			else isChanged = false;
 		}
 	}
 	else if (makeNURBS == false) {
@@ -91,11 +97,35 @@ void ImguiController::windowIMGUI(GLFWwindow* _window) {
 		ImGui::Text("(Degree %d)", maxDegree);
 		ImGui::Checkbox("Make NURBS (Add Weights)", &makeNURBS);
 		NurbsWeightEditor();
-
+		ImVec2 window_pos = ImGui::GetWindowPos();
+		//std::cout << "window pos -> " << window_pos.x << " , " << window_pos.y << std::endl;
+		/*ImGui::Checkbox("Make Circle", &circle);
+		if (circle == true) {
+			weights.clear();
+			for (int i = 0; i < 8; i++) { weights.push_back(circleWeights[i]); }
+		}*/
+ImVec2 window_size = ImGui::GetWindowSize();
+		// Simplified one-liner Combo() API, using values packed in a single constant string
+		// This is a convenience for when the selection set is small and known at compile-time.
+		static float arr[10000];
+		for (int i = 0; i < values.size()/2; i= i+1) {
+			//arr[i] = values[i];
+			ImVec2 v = ImVec2(values[i]*300, window_size.y-values[i+1]*300);
+			ImVec2 c = ImVec2(values[i+2]*300, window_size.y - values[i+3] * 300);
+			ImGui::GetForegroundDrawList()->AddLine(v, c, IM_COL32(0, 255, 0, 200));
+		}
 		
+		//ImGui::PlotLines("Histogram", arr, 500, 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
+	
+		/*ImVec2 window_pos = ImGui::GetWindowPos();
 		
-		//ImGui::PlotHistogram("Histogram", values, IM_ARRAYSIZE(values), 0.01, NULL, -0.0f, 1.0f, ImVec2(0, 80.0f));
-
+		ImVec2 window_center = ImVec2(30, 30);
+		
+			ImGui::GetBackgroundDrawList()->AddCircle(window_center, 1.6f, IM_COL32(255, 0, 0, 200), 0, 10 + 4);*/
+		
+			
+		//ImGui::EndTabItem();
+	
 		ImGui::End();
 	}
 
@@ -123,6 +153,24 @@ void ImguiController::cleanupIMGUI() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+}
+
+void ImguiController::setPredefinedCurve() {
+	std::vector<float> w;
+	switch (itemCurrent) {
+	case 0:
+		break;
+	case 1:		
+		w = PredefinedCurves::getCircleWeights();
+		maxDegree = w.size() - 1;
+		for (int i = 0; i < maxDegree + minDegree; i++)
+		{
+			weights[i] = w[i];
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 

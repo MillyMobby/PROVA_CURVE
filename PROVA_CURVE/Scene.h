@@ -3,21 +3,22 @@
 #include "Shader.h"
 #include "CurveGraphics.h"
 #include "ImguiController.h"
-//CurveGraphics* graphics = new CurveGraphics();
-static double p[] = { 0.1, 0.1,0.0, 0.2, 0.3,0.0, 0.3, 0.4,0.0, 0.4, 0.2,0.0, 0.5, 0.1, 0.0,0.6, 0.2,0.0 };
-
+#include "LineStripGraphics.h"
 class Scene {
 private:
 	CurveGraphics* _graphics;	
+	std::vector<LineStripGraphics> lsg;
+	LineStripGraphics* ls;
 	ImguiController _imgui;
 	Shader _shader;
 	Camera _camera;
 	
-
+	double startX = 0, startY = 0;
 public:
 
 	Scene() {
 		_graphics = new CurveGraphics();
+		ls = new LineStripGraphics();
 	};
 	~Scene() {  };
 	inline Shader getShader() { return _shader; }
@@ -28,7 +29,7 @@ public:
 	void run(float deltaTime);
 	void clean();
 	void handleMouseEvents(int& button, int& action, double& clipX, double& clipY, int& width, int& height);
-	void updatePoints(double& dotX, double& dotY);
+	void updatePoints(double& dotX, double& dotY, float& deltaTime);
 	void handleKeyEvents(int key);
 	void windowShouldCloseIMGUI(GLFWwindow* _window);
 	Camera& getCamera();

@@ -8,6 +8,11 @@ struct CurvePoint
     Vec3d B; // Binormal (unit)
 };
 
+enum Knot_Types {
+    OPEN,
+    CIRCLE,
+    UNIFORM
+};
 
 class CurveMath
 {
@@ -19,9 +24,7 @@ private:
 
     int degree;
     bool bezier = false;
-    
-    /*double increment = 0.01;
-    int steps = 1 / increment;*/
+    int knotsType = 0;
 
 public:
     CurveMath() { basisValues = new float[100]; };
@@ -43,6 +46,8 @@ public:
     inline int getKnotsSize() const {  return knots.size(); }
     inline bool isBezier() const { return bezier; }
     inline void setBezier(bool isBezier) { bezier = isBezier; }
+    inline int getKnotsType() const { return knotsType; }
+    inline void setKnotsType(int type) { knotsType = type; }
     inline int getDegree() const { return degree; }
 
     inline double getDomainLeft() const { return 0; }
@@ -53,7 +58,9 @@ public:
    // inline double getIncrement() const {   return increment;  }
     
     void generateKnots();
-    void setControlPoints(std::vector<Vec3d> cp);
+    void openKnots();
+    void circle();
+    void setControlPoints(std::vector<Vec3d> cp, int knotsType);
     void setDegree(int p);
     std::vector<CurvePoint> BSpline(int u);
     Vec3d deCasteljau(double t, std::vector<float> w);
@@ -69,6 +76,7 @@ public:
     void removeWeights(std::vector<float> w, std::vector<Vec3d> controlPol);
     void print();
 
-    float BSplineBasis(int p, int interval);
+    float BSplineBasis(int p, int interval, double t);
+    std::vector<float> Basis(double t,int p, int n);
 };
 

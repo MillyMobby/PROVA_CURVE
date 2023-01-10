@@ -4,6 +4,7 @@
 #include "Mat4d.h"
 #include "Shader.h"
 #include "CurveMath.h"
+#include "PredefinedCurves.h"
 
 class CurveGraphics
 {
@@ -11,11 +12,15 @@ private:
 	//POLIGONO DI CONTROLLO
 	static const int MaxNumPoints = 100;    
 	int _pointsNumber = 0, _curvePointsNumber = 0;
-	double* controlPolygon;// [MaxNumPoints * 3] ;
+	double* controlPolygon;
 	int _selectedVert = -1;
 	GLuint _VAO = -1; 
 	GLuint _VBO = -1;
 	GLuint _EBO = -1;
+
+	const unsigned int _nElements_position = 4; // da quanti elementi è formata la posizione (x, y, z)
+	
+	const unsigned int _nElements_color = 3;
 
 	//CURVA
 	static const int steps = 100;
@@ -24,6 +29,7 @@ private:
 	GLuint _curveVBO = -1;
 
 	CurveMath curveMath;
+	PredefinedCurves predefinedCurves;
 
 	//VERTICES SETTINGS
 	unsigned int _stride = 4;
@@ -35,9 +41,10 @@ private:
 	Vec3f _lineColor = Vec3f(1.0f, 0.0f, 1.0f);
 	Vec3f _curveColor = Vec3f(1.0f, 0.7f, 1.0f);
 	
-	bool isChanged = false;
-	Mat4d _transform;
+	bool isChanged = false, isVisible = true;
+	//Mat4d _transform;
 public:	
+
 	//inline CurveGraphics& operator=(const CurveGraphics& m) {
 	//	for (int i = 0; i < MaxNumPoints; i++)
 	//	{
@@ -62,11 +69,12 @@ public:
 	const double& getControlPt_Y(int& i);
 	const double& getControlPt_Z(int& i);
 	
+	unsigned int calculateStride();
 	//RENDERING
 	void initGL();
 	void initCurveGL();
 	void setupGL();
-	void rendering(int &deg, bool makeBezier, bool makeNURBS, std::vector<float>& w);
+	void rendering(int &deg, bool makeBezier, bool makeNURBS, std::vector<float>& w, int curveType);
 	void renderScene();
 	void renderCurve();	
 	void cleanGL(GLuint& shaderProgram);
@@ -91,6 +99,9 @@ public:
 	void addWeights(std::vector<float> w);
 	void removeWeights(std::vector<float> w);
 
+	void setPredefinedCurve(int knotsType, std::vector<float>& w);
+	void setCircle(bool& circle);
+
     void RemoveFirstPoint(); 
 	void RemoveLastPoint();
 	void RemoveLastCurvePoint();
@@ -99,6 +110,7 @@ public:
 	void example(double* v);
 	void transformWithCamera(Camera& camera);
 
-	float* BSplineBasisGraphic();
+	std::vector<float>/*float**/ BSplineBasisGraphic(int p);
+
 };
 

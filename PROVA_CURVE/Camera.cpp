@@ -71,14 +71,14 @@ void Camera::ProcessKeyboard(int direction, double deltaTime)
         Mat4d scale = Mat4d::scaleMatrix(1.5+ velocity/4, 1.5 + velocity / 4, 1.5 + velocity / 4);
         //_eye = scale * _eye;
         //_lookAt = scale * _lookAt;
-        _zoom = scale;
+        //_zoom = scale;
         
         _viewMatrix = scale * _viewMatrix;
         //updateTransformMatrix(scale);
     }
     if (direction == BACKWARD) {
         Mat4d scale = Mat4d::scaleMatrix(1.5/2- velocity / 4, 1.5/2- velocity / 4, 1.5/2- velocity / 4);
-        _zoom = scale;
+        //_zoom = scale;
         
        _viewMatrix = scale * _viewMatrix;
         //_eye = scale * _eye;
@@ -120,16 +120,24 @@ void Camera::ProcessKeyboard(int direction, double deltaTime)
         //std::cout << "trans matrix" << _transform;
 
     }
-    
-    //Mat4f i = Mat4f::identity();
-    //updateViewMatrix(i);
 }
 
 void Camera::updateProjectionMatrix(int w, int h) {
+    computeAspectRatio(w, h);
+    float target_width = 1.f;
+    float target_height = 1.f;
+    float A = target_width / target_height;;
     float r = _near * tanf(getFov() * 0.5f); // r = n tan (fov/2) e il 2????'
     float t = r / _aspectRatio; // t = aspectRatio * r
     //float h = w / 1.5;
-    
+    //if (_aspectRatio >= A) {
+    //     //wide viewport, use full height
+    //    _projectionMatrix = Mat4d::orthographic(-target_width/(_aspectRatio), target_width /(_aspectRatio), -target_width/2.0f / (_aspectRatio) , target_width /2.0f/ (_aspectRatio) , _near, _far/*-target_width * 2.0f, target_width * 2.0f*/);
+    //}
+    //else {
+    //    // tall viewport, use full width
+    //    _projectionMatrix = Mat4d::orthographic(-target_width / 2.0f, target_width / 2.0f, -target_height * (_aspectRatio), target_height * (_aspectRatio), -target_width /** 2.0f*/, target_width /** 2.0f*/);
+    //}
     // _projectionMatrix = Mat4f::ProjectionMatrix(r, t, 0, _aspectRatio, _near, _far);
     _projectionMatrix = Mat4d::orthographic(-1, 1, -1, 1, _near, _far);
 
@@ -148,11 +156,11 @@ const Mat4d& Camera::getZoomMatrix() const {
 }
 
 void Camera::updateViewMatrix(Mat4d& transform) {
-   // Mat4f scale = Mat4f::scaleMatrix(5, 5, 5);
+   Mat4d scale = Mat4d::scaleMatrix(1,1,1);
     _viewMatrix = Mat4d::ViewMatrix(_eye, _lookAt, _up);
     //_zoom = transform;
     //updateTransformMatrix(transform);
-    _viewMatrix = _zoom*_viewMatrix;
+    _viewMatrix = scale*_zoom*_viewMatrix;
 }
 
 

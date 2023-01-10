@@ -8,6 +8,16 @@ void CurveGraphics::setSelectedVert(int s) {  _selectedVert = s; }
 
 const int CurveGraphics::getPointsNumber() {  return _pointsNumber; }
 
+unsigned int CurveGraphics::calculateStride() {
+    int stride = 0;
+    
+        stride += _nElements_position;
+   
+        stride += _nElements_color;
+    
+    return stride;
+}
+
 const double& CurveGraphics::getControlPt_X(int& i) { 
     return controlPolygon[i * _stride];
 }
@@ -27,9 +37,19 @@ void CurveGraphics::initGL() {
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     GLsizeiptr verticesSize = MaxNumPoints * sizeof(controlPolygon[0]);
 
+    /*_stride = calculateStride();
+    unsigned int position = 0;*/
+
     glBufferData(GL_ARRAY_BUFFER, verticesSize, (void*)0, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, _stride * sizeof(GLdouble), (void*)0);
+    glVertexAttribPointer(0, _nElements_position, GL_DOUBLE, GL_FALSE, _stride * sizeof(GLdouble), (void*)0);
     glEnableVertexAttribArray(0);
+    //position += _nElements_position;
+    ////if (hasColor()) {
+    //    //std::cout << "COLOR ";
+    //    glVertexAttribPointer(2, _nElements_color, GL_FLOAT, GL_FALSE, _stride * sizeof(GLfloat), (void*)0);
+    //    glEnableVertexAttribArray(2);
+    //    position += _nElements_color;
+    //}
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     initCurveGL();
@@ -41,7 +61,7 @@ void CurveGraphics::initCurveGL() {
     glGenBuffers(1, &_curveVBO);
     glBindVertexArray(_curveVAO);
     glBindBuffer(GL_ARRAY_BUFFER, _curveVBO);
- GLsizeiptr verticesSize = (steps*30) * sizeof(controlPolygon[0]);
+ GLsizeiptr verticesSize = (steps*600) * sizeof(controlPolygon[0]);
     
     glBufferData(GL_ARRAY_BUFFER, verticesSize, (void*)0, GL_STATIC_DRAW); 
     glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, _curveStride * sizeof(GLdouble), (void*)0);
@@ -111,18 +131,23 @@ void CurveGraphics::AddPoint(double x, double y)
             LoadPointsIntoVBO(); 
         }
     //}      
-        curveMath.setControlPoints(controlPointsVector());
+        curveMath.setControlPoints(controlPointsVector(),0);
         curveMath.generateKnots();
-       curveMath.print();
+       
         isChanged = true;
       /*if (_pointsNumber > curveMath.getDegree()) */   
         
     
 }
 
-void CurveGraphics::rendering(int &deg, bool makeBezier,  bool makeNURBS, std::vector<float>& w) {
-    _lineColor = Vec3f(0.0f, 0.5f, 0.7f);
-    //addWeights(w);
+void CurveGraphics::rendering(int &deg, bool makeBezier,  bool makeNURBS, std::vector<float>& w, int curveType) {
+    //std::vector<float> ww = w;
+    if (curveType == 1 && makeNURBS == true) {
+        if (predefinedCurves.getLoaded() == false) setPredefinedCurve(1, w); 
+        curveMath.setDegree(2);
+        deg = curveMath.getDegree();
+    }
+    else if (curveType == 0) { curveMath.setKnotsType(0); predefinedCurves.setLoaded(false); }
     if (makeBezier == true  && _pointsNumber> 1) 
     {
         if (deg != _pointsNumber - 1)isChanged = true;
@@ -133,10 +158,12 @@ void CurveGraphics::rendering(int &deg, bool makeBezier,  bool makeNURBS, std::v
         curveMath.setDegree(deg);
         isChanged = true;
     }
-    //else if (_pointsNumber <= 2 && _pointsNumber>0 && deg <=1) {}
+    
     else deg = curveMath.getDegree();
     curveMath.resizeMultiplicities();
-addWeights(w);
+    
+    addWeights(w);
+
     if (isChanged == true || makeNURBS == true) {  modifyCurve(w); }
     isChanged = false;
        if (curveMath.degenere(_pointsNumber) == false) {
@@ -161,10 +188,11 @@ void CurveGraphics::ChangePoint(int i, double x, double y, double z)
         controlPolygon[i * _stride] = x;
         controlPolygon[i * _stride + 1] = y;  
         controlPolygon[i * _stride + 2] = z;
+        //if (_selectedVert==i )controlPolygon[i * _stride + 3] = 0;
     }
     LoadPointsIntoVBO();
 
-    curveMath.setControlPoints(controlPointsVector());
+    curveMath.setControlPoints(controlPointsVector(),0);
     isChanged = true;
 }
 void CurveGraphics::ChangePoint(int i, double x, double y)
@@ -172,11 +200,11 @@ void CurveGraphics::ChangePoint(int i, double x, double y)
     if (i >= 0 && i < _pointsNumber) {
         controlPolygon[i * _stride] = x;
         controlPolygon[i * _stride + 1] = y;
-        
+        //if (_selectedVert == i) controlPolygon[i * _stride + 3] = 0;
     }
     LoadPointsIntoVBO();
 
-    curveMath.setControlPoints(controlPointsVector());
+    curveMath.setControlPoints(controlPointsVector(),0);
     isChanged = true;
 }
 
@@ -184,17 +212,17 @@ void CurveGraphics::modifyCurve(std::vector<float>& w)
 {
     curveMath.resizeMultiplicities();
     
-    double uinc = 0.01;
+    double uincMin = 0.005, uincMax = 0.1;
     std::vector<Vec3d> controlPoints = controlPointsVector(); 
-    curveMath.setControlPoints(controlPoints);
+    curveMath.setControlPoints(controlPoints,0);
     curveMath.generateKnots();
     int c = 0;
     Vec3d point = Vec3d(0);
 
     if (curveMath.degenere(_pointsNumber) == false)  {
    
-        for(double u = curveMath.getDomainLeft();u<curveMath.getDomainRight()+uinc; u = u+uinc) {
-            if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2)
+        for(double u = curveMath.getDomainLeft(); u<curveMath.getDomainRight()+ uincMin; u = u+ uincMin) {
+            if (curveMath.getKnotsSize() == (curveMath.getDegree() + 1) * 2 )
             {
                 curveMath.setBezier(true);
                 point = curveMath.deCasteljau(u, w);
@@ -209,7 +237,8 @@ void CurveGraphics::modifyCurve(std::vector<float>& w)
             else if (_curvePointsNumber >= 0 && c >= _curvePointsNumber ) { AddCurvePoint(point.x, point.y); }
             c++; 
         }     
-    }   
+    }
+    //BSplineBasisGraphic();
 }
 
 
@@ -231,19 +260,29 @@ void CurveGraphics::addWeights(std::vector<float> w) {
                 (controlPolygon[i * _stride] / controlPolygon[i * _stride + 2]) * w[i],
                 (controlPolygon[i * _stride + 1] / controlPolygon[i * _stride + 2]) * w[i],
                 w[i]);
-
         }
-    }
-    
+    }    
 }
 
-void CurveGraphics::removeWeights(std::vector<float> w) {
-    for (int i = 0; i < _pointsNumber; i++) {
-        controlPolygon[i * _stride] = controlPolygon[i * _stride] / controlPolygon[i * _stride + 2];
-        controlPolygon[i * _stride + 1] = controlPolygon[i * _stride + 1] / controlPolygon[i * _stride + 2];
-        controlPolygon[i * _stride + 2] = w[i];
+
+void CurveGraphics::setPredefinedCurve(int knotsType, std::vector<float>& w) {
+    curveMath.setKnotsType(knotsType);
+    
+    const const std::vector<double> v = PredefinedCurves::getCircleControlPolygon();
+    while (_pointsNumber > 0) {
+
+        RemoveLastPoint();
     }
+    for (int i = 0; i < 9; i++) {
+        AddPoint(v[i * 2], v[i * 2 + 1]);
+    }
+    curveMath.setControlPoints(controlPointsVector(), 1);
+    curveMath.generateKnots();
+    predefinedCurves.setLoaded(true);
+    //isChanged = true;
+
 }
+
 
 void CurveGraphics::RemoveFirstPoint()
 {
@@ -259,7 +298,7 @@ void CurveGraphics::RemoveFirstPoint()
     _pointsNumber--;
     if (_pointsNumber > 0) {
         LoadPointsIntoVBO();
-        curveMath.setControlPoints(controlPointsVector());
+        curveMath.setControlPoints(controlPointsVector(),0);
         isChanged = true;
     }
 }
@@ -271,7 +310,7 @@ void CurveGraphics::RemoveLastPoint() {
     if (_pointsNumber > 0) { 
         _pointsNumber--; 
         curveMath.deleteLastMultiplicity(); 
-        curveMath.setControlPoints(controlPointsVector());
+        curveMath.setControlPoints(controlPointsVector(),0);
         isChanged = true;
     }
 }
@@ -292,6 +331,7 @@ void CurveGraphics::renderScene() {
      if (_pointsNumber > 0) 
      {
         glBegin(GL_LINE_STRIP);
+        //if (controlPolygon[])
         glVertexAttrib3f(_colorLocation, _lineColor.x, _lineColor.y, _lineColor.z);		// magenta
         glDrawArrays(GL_LINE_STRIP, 0, _pointsNumber); 
         glEnd();
@@ -364,7 +404,7 @@ void CurveGraphics::example(double* v) {curveMath.setDegree(3);
 void CurveGraphics::transformWithCamera(Camera& camera)
 {
     Vec4d pt = Vec4d(0);
-    Mat4d t = camera.getTransform();//_camera.updateViewMatrix(inverseT);
+    Mat4d t = camera.getTransform();
     Mat4d z = camera.getZoomMatrix();
     z = z.inverse();
     for (int i = 0; i < _pointsNumber * 4 ; i = i + 4) {
@@ -382,14 +422,24 @@ void CurveGraphics::transformWithCamera(Camera& camera)
     
 }
 
-float* CurveGraphics::BSplineBasisGraphic() {
+std::vector<float> CurveGraphics::BSplineBasisGraphic(int p) {
    float value = -2;
-    if (curveMath.degenere(_pointsNumber) == false) {
-        
+   
+   
+   if (curveMath.degenere(_pointsNumber) == false) {
+    std::vector<float> values ;
+      
+           for (float t = 0; t<= 1 + 0.1; t = t+ 0.1) {
+           
+            int m = curveMath.getKnotsInterval(t);
+            value = curveMath.BSplineBasis(curveMath.getDegree(),m-p ,t);
+            //values.push_back(t);           
+            
+            values.push_back(value);
+           }
+           return values;
+   }
+   return std::vector<float>(11, 1);
     
-    for (int k = 0; k < curveMath.getKnotsVector().size(); k++) {
-        curveMath.BSplineBasis(curveMath.getDegree(), k);
-    }
-    }
-    return curveMath.getBasisValues();
 }
+

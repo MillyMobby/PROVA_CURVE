@@ -5,6 +5,7 @@ bool CurveMath::degenere(int pointsNum) {
 }
 
 const int CurveMath::getKnotsInterval(double t) {
+	//if (knotsType == 0) {
 	int n = knots.size()-degree-2;
 	
 	for (int i = 0; i < n; i++) {
@@ -13,6 +14,17 @@ const int CurveMath::getKnotsInterval(double t) {
 	}
 	if (t >= knots[n] ) {  return n; }
 	
+	
+	//}
+	/*else if (knotsType == 1) {
+		int n = knots.size() - degree - 2;
+		for (int i = 0; i < n; i++) {
+			double k = knots[i];
+			if (t >= knots[i] && t < knots[i + 1]) return i;
+			else if (t == knots[i] && t == knots[i + 1]) return i;
+		}
+		if (t >= knots[n]) { return n; }
+	}*/
 	return -1;
 }
 
@@ -54,15 +66,54 @@ const double CurveMath::getKnot(int i) {
 
 void CurveMath::generateKnots() {
 	knots.clear();
+	switch (knotsType) {
+	case 0:
+		openKnots();
+		break;
+	case 1:
+		circle();
+		break;
+	default:
+		break;
 
-	for (int i = 0; i <= degree; i++) { knots.push_back(0); }
 
-	int middle = (controlPoints.size() -1)- degree;
-	for (int j = 0; j < middle; j++) {
-		double h = double(j + 1) / (middle + 1);
-		knots.push_back(h);		
-	}	
-	for (int k = 0; k <=degree; k++) { knots.push_back(1);  }
+	}
+	
+}
+
+void CurveMath::openKnots() {
+for (int i = 0; i <= degree; i++) { knots.push_back(0); }
+
+		int middle = (controlPoints.size() -1)- degree;
+		for (int j = 0; j < middle; j++) {
+			double h = double(j + 1) / (middle + 1);
+			knots.push_back(h);		
+		}	
+		for (int k = 0; k <=degree; k++) { knots.push_back(1);  }
+}
+
+void CurveMath::circle() {
+	//if (degree == 2) {
+		for (int i = 0; i <= degree; i++) { knots.push_back(0); }
+
+		/*int middle = (controlPoints.size() - 1) - degree;
+		for (int j = 0; j < middle; j++) {
+			double h = double(j + 1) / (middle + 1);
+			for (int k = 0; k < degree; k++) {knots.push_back(h);}
+			
+		}*/
+		knots.push_back(double(0.25));
+		knots.push_back(double(0.25));
+
+		knots.push_back(double(0.5));
+		knots.push_back(double(0.5));
+
+		knots.push_back(double(0.75));
+		knots.push_back(double(0.75));
+
+		for (int k = 0; k <= degree; k++) { knots.push_back(1); }
+	
+	
 }
 
 void CurveMath::setDegree(int p) { degree = p; }
@@ -74,7 +125,7 @@ Vec3d CurveMath::deCasteljau(double t, std::vector<float> w) {
 		std::vector<Vec3d> points = controlPoints;
 		for (int i = degree; i > 0; i--) {
 			for (int j = 0; j < i; j++) {
-				points[j] = Vec3d::lerp(points[j]/**w[j]*/, points[j + 1]/**w[j+1]*/, t);
+				points[j] = Vec3d::lerp(points[j], points[j + 1], t);
 			}
 		}
 		result = points[0];
@@ -83,12 +134,13 @@ Vec3d CurveMath::deCasteljau(double t, std::vector<float> w) {
 	return result;
 }
 
-void CurveMath::setControlPoints(std::vector<Vec3d> cp) {
+void CurveMath::setControlPoints(std::vector<Vec3d> cp, int knotsType) {
 	controlPoints = cp;
 	generateKnots();
 }
 
-std::vector<double> CurveMath::fullInsertion(int knotInterval, double t) {
+
+std::vector<double> CurveMath::fullInsertion(int knotInterval, double t) { //NON USATO
 	std::vector<double> newKnots;
 	for (int i = 0; i < knotInterval; i++) {
 		newKnots.push_back(knots[i]);
@@ -111,7 +163,7 @@ Vec3d CurveMath::deBoor(double t, std::vector<float> w) {
 	if (m >= degree && m < n) {
 		std::vector<Vec3d> points;
 		for (int j = m - degree; j <= m; j++) {
-			points.push_back(controlPoints[j] /** w[j]*/);
+			points.push_back(controlPoints[j]);
 		}
 
 		for (int i = degree; i > 0; i--) {
@@ -120,7 +172,7 @@ Vec3d CurveMath::deBoor(double t, std::vector<float> w) {
 				points[j] = Vec3d::lerp(points[j], points[j + 1], omega);
 			}
 		}
-		result = points[0]; // lo divido per Pz
+		result = points[0]; 
 		points.clear();
 	}
 	return result;
@@ -130,44 +182,73 @@ void CurveMath::print() {
 	for (int i = 0; i < knots.size(); i++) { std::cout << " " << knots[i] << ", "; }
 }
 
-float CurveMath::BSplineBasis( int p, int interval) {
+float CurveMath::BSplineBasis( int p, int interval, double t) {
 	double coordinate_Y = -1;
-	//if (knots[interval] == 0 || knots[interval == 1]) { coordinate_Y = 1;  return coordinate_Y; }
+	
 	double numerator1, denominator1, numerator2, denominator2, expr1 =0, expr2=0;
 	int k = 0;
-	for (double t = knots[interval]; t < knots[interval + p + 1] + 0.01; t = t + 0.01) {
+	//if (t == knots[0]) { return 1.0f; }
+	
 	if (p == 0) {
+		
 		if (t >= knots[interval] && t < knots[interval + 1]) coordinate_Y = 1;
 		else coordinate_Y = 0;
 	}
-	//else if (p == 1) {
-	//	if (t >= knots[interval] && t < knots[interval + 1]) coordinate_Y = (t - knots[interval])/(knots[interval + 1] - knots[interval]);
-	//	else if (t >= knots[interval+1] && t <= knots[interval + 2]) coordinate_Y = (knots[interval+2]-t) / (knots[interval + 2] - knots[interval+1]);
-	//}
+	/*else if (p == 1) {
+		if (t >= knots[interval] && t < knots[interval + 1]) coordinate_Y = (t - knots[interval])/(knots[interval + 1] - knots[interval]);
+		else if (t >= knots[interval+1] && t <= knots[interval + 2]) coordinate_Y = (knots[interval+2]-t) / (knots[interval + 2] - knots[interval+1]);
+	}*/
 	else {
 		numerator1 = t - knots[interval]; 
 		denominator1 = knots[interval + p] - knots[interval];
 		numerator2 = knots[interval + p + 1] - t; 
 		denominator2 = knots[interval + p + 1] - knots[interval + 1];
 
-		if (denominator1 != 0) /*{ expr1 = 0.0; }
-		else */{ expr1 = numerator1 / denominator1; }
+		if (denominator1 == 0) { expr1 = 0.0; }
+		else { expr1 = numerator1 / denominator1; }
 
-		if (denominator2 != 0) /*{ expr2 = 0.0; }
-		else */{ expr2 = numerator2 / denominator2; }
+		if (denominator2 == 0) { expr2 = 0.0; }
+		else { expr2 = numerator2 / denominator2; }
 
-		coordinate_Y = expr1 * BSplineBasis( p - 1, interval) + expr2 * BSplineBasis(p - 1, interval + 1);
+		coordinate_Y = expr1 * BSplineBasis( p - 1, interval,t) + expr2 * BSplineBasis(p - 1, interval + 1,t);
 		
-	}
-	basisValues[k] = coordinate_Y;
-	k++;
-	}
-	
+	}	
 	return coordinate_Y;
 }
 
 
+std::vector<float> CurveMath::Basis(double t,int p, int n) {
+	/* n = pointsNumber;
+	   p = degree
+	   m+1 = knots.size();	
+	*/
+	double numerator1, denominator1, numerator2, denominator2, numerator3, denominator3, expr1 = 0, expr2 = 0;
+	std::vector<float> B = std::vector<float>(n, 0);
+	if (t == knots[0]) { B[0] = 1.0f; return B; }
+	else if (t == knots[n - 1]) { B[n - 1] = 1.0f; return B; }
 
+	int k = getKnotsInterval(t);
+	B[k] = 1.0f;
+	for (int i = 1; i <= p; i++) {
+		numerator2 = knots[k + 1] - t;
+		denominator2 = knots[k + 1] - knots[(k-i) + 1];
+		B[k - i] = (numerator2 / denominator2)*B[(k-i)+1];
+	
+		for (int j = k - i + 1; j >= k - 1; j--) {
+			numerator1 = t - knots[j];
+			denominator1 = knots[j + i] - knots[j];
+
+			numerator3 = knots[j + i + 1] - t;
+			denominator3 = knots[j + i + 1] - knots[j + 1];
+
+
+			B[j] = (numerator1 / denominator1) * B[j] + (numerator3 / denominator3) * B[j + 1];
+		}
+		B[k] = ((t - knots[k]) / (knots[k + i] - knots[k])) * B[k];
+	
+	}
+	return B;
+}
 
 
 

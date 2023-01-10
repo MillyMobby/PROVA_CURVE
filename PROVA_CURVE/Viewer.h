@@ -6,7 +6,7 @@ struct WindowSize {
 
 public:
     
-    WindowSize() { isChanged = false; width = 920; height = 920; }
+    WindowSize() { isChanged = false; width = 1920; height = 1080; }
     bool isChanged;
     int width;
     int height;
@@ -17,8 +17,8 @@ class Viewer
     //WINDOW
     GLFWwindow* _window = nullptr;   
     WindowSize _windowSize;
-    float deltaTime = 0.0f;	 //Time between current frame and last frame
-    float lastFrame = 0.0f;
+    //static float deltaTime/* = 0.0f*/;	 //Time between current frame and last frame
+    //float lastFrame = 0.0f;
     bool isMoving = false;
    
 public:

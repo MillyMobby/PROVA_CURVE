@@ -2,28 +2,34 @@
 
 void Scene::initScene() {
 	_shader.processShader();
-	//applyUniforms(_name, iteratorM.second);
 	
 	_graphics->setupGL();
 	_graphics->initGL();
+
+	//for (int i = 0; i <= 100/*_imgui.grado +1*/; i++) {
+	//	LineStripGraphics l =  LineStripGraphics();
+	//	l.setupGL();
+	//	l.initGL();
+	//	l.initializeXcoordinates();
+	//	lsg.push_back(l);
+	//	
+	//}
 	
 	// ci andra' anche la camera
 }
 
 void Scene::loadCamera(int w, int h) {
-//_camera.setFov(attr);
-// 
-_camera.setNear(0.1); 
-_camera.setFar(100.0); 
 
-	
+	_camera.setNear(0.1); 
+	_camera.setFar(100.0); 
 
-_camera.setEye(Vec3d(0.0f, 0.0f, 2.0f));
-_camera.setLookAt(Vec3d(0.0f, 0.0f, 1.0f));
-_camera.setup(Vec3d(0.0f, 1.0f, 0.0f));
-_camera.computeAspectRatio(w,h);
-Mat4d id = Mat4d::identity();
-_camera.setTransform(id);
+
+	_camera.setEye(Vec3d(0.0f, 0.0f, 2.0f));
+	_camera.setLookAt(Vec3d(0.0f, 0.0f, 1.0f));
+	_camera.setup(Vec3d(0.0f, 1.0f, 0.0f));
+	_camera.computeAspectRatio(w,h);
+	Mat4d id = Mat4d::identity();
+	_camera.setTransform(id);
 	
 	_camera.update(w,h);
 
@@ -39,8 +45,10 @@ void Scene::run(float deltaTime) {
 	glUseProgram(_shader.getShaderProgram());
 	//glUniform2f(glGetUniformLocation(shader.getShaderProgram(), "windowCoords"), _windowSize.width, _windowSize.height);
 	
-	_graphics->rendering(_imgui.grado, _imgui.makeBezier, _imgui.makeNURBS, _imgui.weights);
-	//BSplineBasisGraphic();
+	_graphics->rendering(_imgui.grado, _imgui.makeBezier, _imgui.makeNURBS, _imgui.weights, _imgui.itemCurrent);
+	
+	//lsg[0].renderScene(); lsg[1].renderScene(); lsg[2].renderScene(); /*lsg[3].renderScene();*/
+
 	_shader.updateCameraUniform(_camera);
 }
 
@@ -55,28 +63,32 @@ void Scene::handleMouseEvents(int& button, int& action, double& clipX, double& c
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard) { return; }
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		Vec4d mouse = Vec4d(clipX, clipY, 1,0);
-		//Mat4f inverseT = _camera.getTransform();//_camera.updateViewMatrix(inverseT);
-		//Mat4f w = _camera.getViewMatrix();
-		//Mat4f p = _camera.getProjectionMatrix();
-		//Mat4f id = Mat4f::identity();
-		//inverseT = inverseT.inverse();
-		//w = w.inverse();
-		//p = p.inverse();
-		//bool last = true;
-		//_shader.setT1("isLast", last);
-		//_camera.setTransform(id);
-
-		//std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
-		//_graphics->AddPoint(/*xpos, ypos*/clipX, clipY);
-		//_graphics->transformWithCamera(_camera);
-		_graphics->AddPoint(mouse.x, mouse.y);
 		
-		_imgui.maxDegree = _graphics->getPointsNumber() - 1;
-		//
+		std::cout << " mouse in " << clipX << ", " << clipY << std::endl;
+		
+		_graphics->AddPoint(clipX, clipY);
+		
+		_imgui.maxDegree = _graphics->getPointsNumber() - 1;		
+		//BSplineBasisGraphic();
 		
 	}
+	else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
+		
+		
+		if (action == GLFW_PRESS) {startX= clipX, startY= clipY;
+		_graphics->setSelectedVert(-2); std::cout << " moving mouse in " << clipX << ", " << clipY << std::endl;
+		//	Mat4d trans = Mat4d::translation(-velocity, 0, 0);
+		//	//_viewMatrix = trans * _viewMatrix;
+
+		//	updateTransformMatrix(trans);// std::cout << "trans matrix" << _transform;
+		}
+		else if (action == GLFW_RELEASE) {
+			std::cout << " new mouse in " << clipX << ", " << clipY << std::endl;
+			_graphics->setSelectedVert(-1);
+		}
+	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+		std::cout << " moving mouse in " << clipX << ", " << clipY << std::endl;
 		if (action == GLFW_PRESS) {
 			double minDist = 10000.0;
 			int minI;
@@ -91,6 +103,7 @@ void Scene::handleMouseEvents(int& button, int& action, double& clipX, double& c
 				if (minDist <= 10.0) {minI; }
 			}			
 			_graphics->setSelectedVert(minI);
+			std::cout << " new mouse in " << clipX << ", " << clipY << std::endl;
 			_graphics->ChangePoint(minI, /*xpos, ypos*/clipX, clipY);
 		}
 		else if (action == GLFW_RELEASE) {
@@ -99,10 +112,15 @@ void Scene::handleMouseEvents(int& button, int& action, double& clipX, double& c
 	}
 }
 
-void Scene::updatePoints(double& dotX, double& dotY) {
-	if (_graphics->getSelectedVert() == -1) { return; }
+void Scene::updatePoints(double& dotX, double& dotY, float& deltaTime) {
 	
-	_graphics->ChangePoint(_graphics->getSelectedVert(), dotX, dotY);
+	if (_graphics->getSelectedVert() == -1) { return; }
+	else if (_graphics->getSelectedVert() == -2) { 
+		Mat4d trans = Mat4d::translation((dotX-startX)* deltaTime, (dotY- startY)* deltaTime, 0);
+		_camera.updateTransformMatrix(trans);
+		checkForTransformations(true); 
+	}
+	else _graphics->ChangePoint(_graphics->getSelectedVert(), dotX, dotY);
 }
 
 void Scene::handleKeyEvents(int key) {
@@ -145,10 +163,16 @@ void Scene::checkForTransformations(bool wasMoved) {
 }
 
 void Scene::BSplineBasisGraphic() {
-	int count = 0;
 	
-		_imgui.values = _graphics->BSplineBasisGraphic();
-		count++;
+	for (int p = 0; p <_graphics->getPointsNumber()/*_imgui.grado*/; p++) {
+		Vec3f col;
+		if (p == 0) { col = Vec3f(p / 7.0f, 0.1f, 0.9f); }
+		else if (p==1) col = Vec3f(p / 7.0f, 0.6f, 0.5f);
+		else if (p == 2) col = Vec3f(p / 3.0f, 0.9f, 0.4f);
+		
+		lsg[p].setPointsVector(_graphics->BSplineBasisGraphic(p));
+		lsg[p].setLineColor(col);		
+	}
 	
 	
 }

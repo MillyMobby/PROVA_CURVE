@@ -1,5 +1,7 @@
 #include "Viewer.h"
 static Scene scene;
+static float deltaTime/* = 0.0f*/;	 //Time between current frame and last frame
+float lastFrame = 0.0f;
 void Viewer::start() {
 		init();	
 		scene.initScene();
@@ -114,7 +116,7 @@ void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	
-	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width )) - 1.0f;  // clip space [-1,1]. 
+	double clipX =  (2.0f * (double)xpos / (double)(windowSize->width)) - 1.0f;  // clip space [-1,1]. 
 	double clipY = 1.0f - (2.0f * (double)ypos / (double)(windowSize->height )); 
 	
 	scene.handleMouseEvents(button, action, clipX, clipY, windowSize->width, windowSize->height);
@@ -125,7 +127,7 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double x, double y) {
 	double dotX = (2.0f * (double)x / (double)(windowSize->width - 1)) - 1.0f;
 	double dotY = 1.0f - (2.0f * (double)y / (double)(windowSize->height - 1));
 
-	scene.updatePoints( dotX, dotY);	
+	scene.updatePoints( dotX, dotY, deltaTime);	
 }
 
 void Viewer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
